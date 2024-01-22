@@ -1,0 +1,25 @@
+#root {
+  min-width: 100%;
+  min-height: 100%;
+  display: grid;
+}
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+
+#left {
+  background-color: black;
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+#right{
+  background-color: white;
+  grid-area: 1 / 2 / 2 / 6;
+}
+
