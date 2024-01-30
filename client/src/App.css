@@ -22,12 +22,12 @@
 }
 
 
-#sidebar {
+.sidebar {
   background-color: #e1e0dd;
   grid-area: 1 / 1 / 2 / 2;
 }
 
-#chat{
+.chat{
   background-color: white;
   grid-area: 1 / 2 / 2 / 6;
 }

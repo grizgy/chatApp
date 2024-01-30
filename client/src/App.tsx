@@ -5,6 +5,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
+import ChatItem from './components/chat-item';
+
 import Chat from './components/chat'
 
 import { io } from 'socket.io-client'
@@ -21,7 +23,7 @@ function App() {
       <div className='app'>
             <div className='app-body'>
 
-                <div id='sidebar'>
+                <div className='sidebar'>
                   <div className='sidebar-header'>
                           <Avatar color='action'/>
                           <div className='sidebar-header-right'>
@@ -37,12 +39,16 @@ function App() {
                       </div>
                   </div>
                   <div className='sidebar-list'>
-
+                      <ChatItem/>
+                      <ChatItem/>
+                      <ChatItem/>
+                      <ChatItem/>
+                      <ChatItem/>
                   </div>
                   
                 </div>
 
-                <div id='chat'>
+                <div className='chat'>
                   <Chat></Chat>
                 </div>
             

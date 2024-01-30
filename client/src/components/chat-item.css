@@ -1,0 +1,10 @@
+.chat-item{
+    display: grid;
+    grid-template-columns: 8px 40px auto;
+}
+
+.item-info{
+    margin-left: 16px;
+    border-bottom: 1px solid #e9edef;
+
+}
