@@ -6,8 +6,9 @@ import { Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 import ChatItem from './components/chat-item';
-
-import Chat from './components/chat'
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import MicIcon from '@mui/icons-material/Mic';
 
 import { io } from 'socket.io-client'
 
@@ -61,8 +62,22 @@ function App() {
                         <MoreVertIcon color='action'/>
                     </div>
                   </div>
-                  <div className="chat-body"></div>
-                  <div className="chat-footer"></div>
+                  <div className="chat-body">
+
+                  </div>
+                  <div className="chat-footer">
+                    <div className="chat-footer-actions">
+                        <InsertEmoticonIcon color='action'/>
+                        <AttachFileIcon color='action'/>
+                    </div>
+                    <div className="chat-footer-input">
+                      <input placeholder='Type a message'/>
+                    </div>
+                    
+                    <div className="chat-footer-mic">
+                      <MicIcon/>
+                    </div>
+                  </div>
 
 
                   {/* <Chat></Chat> */}
