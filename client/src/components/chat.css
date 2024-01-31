@@ -17,7 +17,7 @@
     border: 1px solid rgb(51, 45, 45);
 }
 
-#image1{
+/* #image1{
     border-radius: 50%;
     grid-column-start: 1;
     grid-column-end: 2;
@@ -29,7 +29,7 @@
     width: 90%;
     height: 90%;
     object-fit: cover;
-}
+} */
 
 #chatName{
     grid-column-start: 2;

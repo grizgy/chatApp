@@ -59,3 +59,36 @@
   background-color: #f0f2f5;
   outline: none;
 }
+
+.chat{
+  position: relative;
+}
+
+.bg-chat{
+  background-image: url("background.jpg");
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  /* background-color: #efeae2; */
+  opacity: 0.4;
+}
+
+.chat-header{
+  position: relative;
+  background-color: #f0f2f5;
+  height: 60px;
+  display: grid;
+  grid-template-columns: 40px auto 60px;
+  align-items: center;
+  padding-left: 8px;
+  border-left: 1px solid #d1d7db;
+}
+
+.chat-header-info{
+  margin-left: 16px;
+}
+
+.chat-header-right{
+  display: flex;
+
+}

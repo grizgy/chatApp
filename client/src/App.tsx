@@ -25,7 +25,7 @@ function App() {
 
                 <div className='sidebar'>
                   <div className='sidebar-header'>
-                          <Avatar color='action'/>
+                          <Avatar color='action' src='myAvatar.jpg'/>
                           <div className='sidebar-header-right'>
                           <DonutLargeIcon color='action'/>
                           <ChatIcon color='action'/>
@@ -39,17 +39,33 @@ function App() {
                       </div>
                   </div>
                   <div className='sidebar-list'>
-                      <ChatItem/>
-                      <ChatItem/>
-                      <ChatItem/>
-                      <ChatItem/>
-                      <ChatItem/>
+                      <ChatItem title='Kiro Breika' info='Hello'/>
+                      <ChatItem title='Georgi' info='Hello'/>
+                      <ChatItem title='Ivan' info='Hello'/>
+                      <ChatItem title='Petkan' info='Hello'/>
+                      <ChatItem title='Toni' info='Hello'/>
                   </div>
                   
                 </div>
 
                 <div className='chat'>
-                  <Chat></Chat>
+                  <div className="bg-chat"></div>
+                  <div className="chat-header">
+                    <Avatar id='image1' src="kiro.jpg" />
+                    <div className="chat-header-info">
+                        <span className='title'>Kiro Breika</span><br></br>
+                        <span className='info'>last seen at 05:00</span>
+                    </div>
+                    <div className="chat-header-right">
+                        <SearchIcon color='action'/>
+                        <MoreVertIcon color='action'/>
+                    </div>
+                  </div>
+                  <div className="chat-body"></div>
+                  <div className="chat-footer"></div>
+
+
+                  {/* <Chat></Chat> */}
                 </div>
             
             </div>

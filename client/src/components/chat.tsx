@@ -1,4 +1,5 @@
 import './Chat.css'
+import { Avatar } from '@mui/material'
 
 function Chat() {
 
@@ -8,7 +9,7 @@ function Chat() {
 
         <div id='container'>
             <header id='header'>
-              <img id='image1' src="kiro.jpg" />
+              <Avatar id='image1' src="kiro.jpg" />
               <label id='chatName'>Kiro Breka Active</label>
             </header>
             <p id='chatHistory' ></p>
