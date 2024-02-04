@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+
 const express = require('express')
 const app = express();
 const server = require('http').createServer(app)
@@ -6,16 +8,23 @@ const Server = require('socket.io');
 const cors = require('cors')
 const io = Server(server, {
   cors:{
-    origin : 'http://localhost:3001/',
+    origin : 'http://localhost:5173',
     methods : ['GET','PUT']
   }
 })
+
+
+
 
 db.init()
 app.use(cors())
 app.use(express.json())
 
-app.listen(3000, () => {
+// app.listen(3000, () => {
+//   console.log(`Listen on 3000`);
+// }); 
+
+server.listen(3000, () => {
   console.log(`Listen on 3000`);
 }); 
 
@@ -25,12 +34,20 @@ app.listen(3000, () => {
 
 
 app.get('/user/:phoneNumber', async (req : any, res : any) => {
-  const user = await db.user.findOne({phoneNumber : req.params.phoneNumber}).exec()
+  const user = await db.User.findOne({phoneNumber : req.params.phoneNumber}).exec()
   res.send(user)
 })
 
 
 // app.put('/user', async () => {
-//   const result = await db.user.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+//   const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
 //   res.send(result)
 // })
+
+
+io.on('connection', function (socket : any)  {
+  console.log('A user connected');
+  socket.on('message',(data : any)=> {
+    socket.to(data.socketId).emit('messages',data)
+  })
+})

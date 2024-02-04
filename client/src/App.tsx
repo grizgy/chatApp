@@ -4,21 +4,35 @@ import ChatIcon from '@mui/icons-material/Chat';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
 import ChatItem from './components/chat-item';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 
-import { io } from 'socket.io-client'
+import io from 'socket.io-client'
+import { useEffect } from 'react';
 
+const uri = 'http://localhost:3000'
 
-const socket = io('http://localhost:3001')
+const socket = io(uri)
+
 // socket.on('connect', () => {
 //   console.log(`you connected with ID ${socket.id}`)
 // })
 
 function App() {
+
+  useEffect(()=> {
+    socket.on('connect',()=>{
+      console.log(socket.connected)
+      console.log(socket.id)
+      console.log('connected')
+    })
+
+    return () => {
+      socket.off('connect')
+    }
+  },[])
 
   return (
       <div className='app'>
