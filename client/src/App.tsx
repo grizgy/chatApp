@@ -13,8 +13,8 @@ import io from 'socket.io-client'
 import { useEffect } from 'react';
 
 const uri = 'http://localhost:3000'
-
 const socket = io(uri)
+const myphoneNumber = prompt('your number?','')
 
 // socket.on('connect', () => {
 //   console.log(`you connected with ID ${socket.id}`)
@@ -22,11 +22,37 @@ const socket = io(uri)
 
 function App() {
 
+  const updateUser = async (socketId : any) => {
+    let res = await fetch(uri + '/user', {
+      method : 'PUT',
+      body : JSON.stringify({phoneNumber : myphoneNumber, socketId : socketId}),
+      headers : {'content-type' : 'application/json'}
+    })
+
+    let data = await res.json()
+    console.log(data)
+
+  }
+
+  const getUser = async () => {
+    let number = prompt('type phone number','')
+    let res = await fetch(uri + '/user/' + number, {
+      method : 'GET',
+      headers : {'content-type' : 'application/json'}
+    })
+
+    let data = await res.json()
+    console.log(data.socketId)
+
+  }
+
+
   useEffect(()=> {
     socket.on('connect',()=>{
       console.log(socket.connected)
       console.log(socket.id)
       console.log('connected')
+      updateUser(socket.id)
     })
 
     return () => {
@@ -43,7 +69,9 @@ function App() {
                           <Avatar color='action' src='myAvatar.jpg'/>
                           <div className='sidebar-header-right'>
                           <DonutLargeIcon color='action'/>
-                          <ChatIcon color='action'/>
+                            <span onCanPlay={getUser}>
+                              <ChatIcon color='action'/>
+                            </span>
                           <MoreVertIcon color='action'/>
                           </div>
                   </div>

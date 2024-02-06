@@ -8,7 +8,7 @@ const Server = require('socket.io');
 const cors = require('cors')
 const io = Server(server, {
   cors:{
-    origin : 'http://localhost:5173',
+    origin : 'http://localhost:3001',
     methods : ['GET','PUT']
   }
 })
@@ -39,13 +39,14 @@ app.get('/user/:phoneNumber', async (req : any, res : any) => {
 })
 
 
-// app.put('/user', async () => {
-//   const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
-//   res.send(result)
-// })
+app.put('/user', async (req : any, res : any) => {
+  const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+  res.send(result)
+})
 
 
 io.on('connection', function (socket : any)  {
+  console.log(socket.id);
   console.log('A user connected');
   socket.on('message',(data : any)=> {
     socket.to(data.socketId).emit('messages',data)
