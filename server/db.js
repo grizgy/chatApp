@@ -10,6 +10,8 @@ const UserSchema = new Schema({
 
 const userModel = new model ('User', UserSchema)
 
+module.exports.User = userModel
+
 module.exports.init = async () => {
     await mongoose.connect(uri_db)
     await userModel.deleteMany({})

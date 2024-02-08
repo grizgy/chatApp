@@ -69,7 +69,7 @@ function App() {
                           <Avatar color='action' src='myAvatar.jpg'/>
                           <div className='sidebar-header-right'>
                           <DonutLargeIcon color='action'/>
-                            <span onCanPlay={getUser}>
+                            <span onClick={getUser}>
                               <ChatIcon color='action'/>
                             </span>
                           <MoreVertIcon color='action'/>
