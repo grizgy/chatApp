@@ -117,3 +117,18 @@
   outline: none;
   padding: 12px;
 }
+
+.messages-in{
+  position: absolute;
+  background-color: #ffffff;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.messages-out{
+  position: absolute;
+  right : 0px;
+  background-color: #d9fdd3;
+  border-radius: 5px;
+  padding: 4px;
+}

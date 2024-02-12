@@ -10,7 +10,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 
 import io from 'socket.io-client'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const uri = 'http://localhost:3000'
 const socket = io(uri)
@@ -21,6 +21,11 @@ const myphoneNumber = prompt('your number?','')
 // })
 
 function App() {
+
+  const [phoneNumberChat, setPhoneNumberChat] = useState('')
+  const [socketIdChat,setSocketIdChat] = useState('')
+  const [message,setMessage] = useState('')
+  const [mySocketId,setMysocketId] = useState()
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -42,23 +47,46 @@ function App() {
     })
 
     let data = await res.json()
-    console.log(data.socketId)
+    // console.log(data.socketId)
+    setPhoneNumberChat(data.phoneNumber)
+    setSocketIdChat(data.socketId)
 
   }
 
+  const sendMsg = (e : any)=> {
+    if(e.value == 'Enter') {
+      socket.emit('messages', {socketId : socketIdChat, message : message, from : {
+        socketId : mySocketId, phoneNumber : myphoneNumber
+      }})
+      setMessage('')
+      const chatBody = document.getElementById('chat-body')
+      chatBody!.innerHTML += '<span class="messages-out">' + message + '<span/> <br/>'
+    }
+  }
 
   useEffect(()=> {
     socket.on('connect',()=>{
       console.log(socket.connected)
-      console.log(socket.id)
-      console.log('connected')
+      console.log('connected id' + socket.id)
+      setMysocketId(socket.id)
       updateUser(socket.id)
+    })
+
+    socket.on('messages', (data : any)=>{
+
+      const chatBody = document.getElementById('chat-body')
+      chatBody!.innerHTML += '<span class="messages-in">' + data.message + '<span/> <br/>'
+      setSocketIdChat(data.from.socketId)
+
     })
 
     return () => {
       socket.off('connect')
+      socket.off('messages')
     }
   },[])
+
+
 
   return (
       <div className='app'>
@@ -78,7 +106,11 @@ function App() {
                   <div className='sidebar-search'>
                       <div className="search-container">
                           <SearchIcon color='action'/>
-                          <input placeholder='Search or start a new chat'/>
+                          <input placeholder='Search or start a new chat'
+                          value={message}
+                          onKeyDown={sendMsg}
+                          onChange={(e) => setMessage(e.target)}
+                          />
                       </div>
                   </div>
                   <div className='sidebar-list'>
@@ -104,7 +136,7 @@ function App() {
                         <MoreVertIcon color='action'/>
                     </div>
                   </div>
-                  <div className="chat-body">
+                  <div id='chat-body' className="chat-body">
 
                   </div>
                   <div className="chat-footer">
