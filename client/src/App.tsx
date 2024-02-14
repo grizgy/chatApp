@@ -25,7 +25,7 @@ function App() {
   const [phoneNumberChat, setPhoneNumberChat] = useState('')
   const [socketIdChat,setSocketIdChat] = useState('')
   const [message,setMessage] = useState('')
-  const [mySocketId,setMysocketId] = useState()
+  const [mySocketId,setMysocketId] = useState<string | undefined>('')
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -54,13 +54,13 @@ function App() {
   }
 
   const sendMsg = (e : any)=> {
-    if(e.value == 'Enter') {
+    if(e.key == 'Enter') {
       socket.emit('messages', {socketId : socketIdChat, message : message, from : {
         socketId : mySocketId, phoneNumber : myphoneNumber
       }})
       setMessage('')
       const chatBody = document.getElementById('chat-body')
-      chatBody!.innerHTML += '<span class="messages-out">' + message + '<span/> <br/>'
+      chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
     }
   }
 
@@ -75,7 +75,7 @@ function App() {
     socket.on('messages', (data : any)=>{
 
       const chatBody = document.getElementById('chat-body')
-      chatBody!.innerHTML += '<span class="messages-in">' + data.message + '<span/> <br/>'
+      chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
       setSocketIdChat(data.from.socketId)
 
     })
@@ -106,11 +106,7 @@ function App() {
                   <div className='sidebar-search'>
                       <div className="search-container">
                           <SearchIcon color='action'/>
-                          <input placeholder='Search or start a new chat'
-                          value={message}
-                          onKeyDown={sendMsg}
-                          onChange={(e) => setMessage(e.target)}
-                          />
+                          <input placeholder='Search or start a new chat'/>
                       </div>
                   </div>
                   <div className='sidebar-list'>
@@ -128,7 +124,7 @@ function App() {
                   <div className="chat-header">
                     <Avatar id='image1' src="kiro.jpg" />
                     <div className="chat-header-info">
-                        <span className='title'>Kiro Breika</span><br></br>
+                        <span className='title'>Kiro Breika</span><br/>
                         <span className='info'>last seen at 05:00</span>
                     </div>
                     <div className="chat-header-right">
@@ -145,7 +141,11 @@ function App() {
                         <AttachFileIcon color='action'/>
                     </div>
                     <div className="chat-footer-input">
-                      <input placeholder='Type a message'/>
+                      <input placeholder='Type a message'
+                      value={message}
+                      onKeyDown={sendMsg}
+                      onChange={(e) => setMessage(e.target.value)}
+                      />
                     </div>
                     
                     <div className="chat-footer-mic">

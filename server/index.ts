@@ -46,7 +46,7 @@ app.put('/user', async (req : any, res : any) => {
 io.on('connection', (socket : any) => {
   console.log(socket.id);
   console.log('A user connected');
-  socket.on('message',(data : any)=> {
+  socket.on('messages',(data : any)=> {
     socket.to(data.socketId).emit('messages',data)
   })
 })
