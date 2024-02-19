@@ -9,7 +9,7 @@ function ChatItem (props : any) {
             <Avatar src={props.avatar}/>
             <div className="item-info">
                 <span className='title'>{props.title}</span><br/>
-                <span className='info'>{props.info}</span>
+                <span className='info'>{props.lastMessage}</span>
             </div>
         </div>
     )

@@ -26,6 +26,7 @@ function App() {
   const [socketIdChat,setSocketIdChat] = useState('')
   const [message,setMessage] = useState('')
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
+  const [lastMessage, setLastMessage] = useState('');
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -50,6 +51,23 @@ function App() {
     // console.log(data.socketId)
     setPhoneNumberChat(data.phoneNumber)
     setSocketIdChat(data.socketId)
+    console.log(data.phoneNumber)
+    console.log(data.contactsList[0].phoneNumber)
+
+  }
+
+  const getUser2 = async (number : string) => {
+    let res = await fetch(uri + '/user/' + number, {
+      method : 'GET',
+      headers : {'content-type' : 'application/json'}
+    })
+
+    let data = await res.json()
+    // console.log(data.socketId)
+    setPhoneNumberChat(data.phoneNumber)
+    setSocketIdChat(data.socketId)
+    console.log(data.phoneNumber)
+    console.log(data.contactsList[0].phoneNumber)
 
   }
 
@@ -58,6 +76,7 @@ function App() {
       socket.emit('messages', {socketId : socketIdChat, message : message, from : {
         socketId : mySocketId, phoneNumber : myphoneNumber
       }})
+      setLastMessage(message)
       setMessage('')
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
@@ -74,6 +93,7 @@ function App() {
 
     socket.on('messages', (data : any)=>{
 
+      setLastMessage(data.message)
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
       setSocketIdChat(data.from.socketId)
@@ -109,12 +129,23 @@ function App() {
                           <input placeholder='Search or start a new chat'/>
                       </div>
                   </div>
-                  <div className='sidebar-list'>
-                      <ChatItem title='Kiro Breika' info='Hello'/>
-                      <ChatItem title='Georgi' info='Hello'/>
-                      <ChatItem title='Ivan' info='Hello'/>
-                      <ChatItem title='Petkan' info='Hello'/>
-                      <ChatItem title='Toni' info='Hello'/>
+                  <div className='sidebar-list'   >
+
+                  {/* {contactsList.map((contact : any) =>
+                  <span key={contact} onClick={() => getUser2("contact.phoneNumber")}>
+                    <ChatItem avatar="contact.avatar" title='contact.name' lastMessage='contact.lastMessage'/>
+                  </span>)} */}
+
+                      <span onClick={() => getUser2("+3597654321")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+                      <span onClick={() => getUser2("+2222222222")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+                      <span onClick={() => getUser2("+3333333333")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+
+
+                      {/* <span onClick={getUser("userNumber")}><ChatItem title='Kiro Breika' lastMessage='Hello'/></span> */}
+                      <span ><ChatItem title='Georgi' lastMessage={lastMessage}/></span>
+                      <span ><ChatItem title='Ivan' lastMessage='Hello'/></span>
+                      <span ><ChatItem title='Petkan' lastMessage='Hello'/></span>
+                      <span ><ChatItem title='Toni' lastMessage='Hello'/></span>
                   </div>
                   
                 </div>
