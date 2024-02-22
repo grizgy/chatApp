@@ -27,6 +27,7 @@ function App() {
   const [message,setMessage] = useState('')
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
   const [lastMessage, setLastMessage] = useState('');
+  const [contactsList, setContactsList] = useState([])
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -37,6 +38,10 @@ function App() {
 
     let data = await res.json()
     console.log(data)
+    // console.log(data.myphoneNumber)
+
+    getUsersContacts(myphoneNumber)
+
 
   }
 
@@ -52,11 +57,11 @@ function App() {
     setPhoneNumberChat(data.phoneNumber)
     setSocketIdChat(data.socketId)
     console.log(data.phoneNumber)
-    console.log(data.contactsList[0].phoneNumber)
+    console.log(data.contactsList[0]._id)
 
   }
 
-  const getUser2 = async (number : string) => {
+  const getUser2 = async (number : String) => {
     let res = await fetch(uri + '/user/' + number, {
       method : 'GET',
       headers : {'content-type' : 'application/json'}
@@ -67,7 +72,19 @@ function App() {
     setPhoneNumberChat(data.phoneNumber)
     setSocketIdChat(data.socketId)
     console.log(data.phoneNumber)
-    console.log(data.contactsList[0].phoneNumber)
+    console.log(data.contactsList[0]._id)
+
+  }
+
+  const getUsersContacts = async (number : any) => {
+    let res = await fetch(uri + '/user/' + number, {
+      method : 'GET',
+      headers : {'content-type' : 'application/json'}
+    })
+
+    let data = await res.json()
+    setContactsList(data.contactsList)
+    // console.log(data.contactsList)
 
   }
 
@@ -132,13 +149,16 @@ function App() {
                   <div className='sidebar-list'   >
 
                   {/* {contactsList.map((contact : any) =>
-                  <span key={contact} onClick={() => getUser2("contact.phoneNumber")}>
-                    <ChatItem avatar="contact.avatar" title='contact.name' lastMessage='contact.lastMessage'/>
+                  <span key={contact} onClick={() => getUser2(contact.phoneNumber) }>
+                    <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
                   </span>)} */}
 
-                      <span onClick={() => getUser2("+3597654321")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
-                      <span onClick={() => getUser2("+2222222222")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
-                      <span onClick={() => getUser2("+3333333333")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+
+
+                      {/* <span onClick={() => getUsersContacts("+3597654321")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+                      <span onClick={() => getUsersContacts("+2222222222")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span>
+                      <span onClick={() => getUsersContacts("+3333333333")}><ChatItem avatar="user.avatar" title='user.name' lastMessage='Hello'/></span> */}
+
 
 
                       {/* <span onClick={getUser("userNumber")}><ChatItem title='Kiro Breika' lastMessage='Hello'/></span> */}

@@ -16,59 +16,36 @@ module.exports.User = userModel
 module.exports.init = async () => {
     await mongoose.connect(uri_db)
     await userModel.deleteMany({})
-    
-    const Georgi = {name : 'Georgi', phoneNumber : '+3591234567', contactsList : [] }
-    const Ivan = {name : 'Ivan', phoneNumber : '+3597654321', contactsList : []}
-    const Petkan = {name : 'Petkan', phoneNumber : '+2222222222', contactsList : []}
-    const Toni = {name : 'Toni', phoneNumber : '+3333333333', contactsList : []}
-    const Georgina = {name : 'Georgina', phoneNumber : '+4444444444', contactsList : []}
 
-    await new userModel(Georgi).save()
-    await new userModel(Ivan).save()
-    await new userModel(Petkan).save()
-    await new userModel(Toni).save()
-    await new userModel(Georgina).save()
+    const Georgi = await new userModel({name : 'Georgi', phoneNumber : '+3591234567', contactsList : [] }).save()
+    const Ivan = await new userModel({name : 'Ivan', phoneNumber : '+3597654321', contactsList : []}).save()
+    const Petkan = await new userModel({name : 'Petkan', phoneNumber : '2', contactsList : []}).save()
+    const Toni = await new userModel({name : 'Toni', phoneNumber : '3', contactsList : []}).save()
+    const Georgina = await new userModel({name : 'Georgina', phoneNumber : '+4444444444', contactsList : []}).save()
 
-    // const cur = "asdfg"
-    // const cur = (await userModel.findOne({phoneNumber: "+3597654321"}))
-    // console.log(userModel.findOne({phoneNumber: '+3597654321'}))
-
-    await userModel.updateOne({phoneNumber : "+3591234567"}, {$push : {
-        contactsList : [await userModel.findOne({phoneNumber: "+3597654321"}), 
-                        await userModel.findOne({phoneNumber: "+2222222222"}),
-                        await userModel.findOne({phoneNumber: "+3333333333"})]
-    }})
+    await userModel.findByIdAndUpdate(Georgi._id, { $push: {
+        contactsList : [ Ivan, Petkan, Toni, Georgina
+    ]}});
 
 
-
-    await userModel.updateOne({phoneNumber : "+3597654321"}, {$push : {
-        contactsList : [await userModel.findOne({phoneNumber: "+3591234567"}),
-                        await userModel.findOne({phoneNumber: "+2222222222"}),
-                        await userModel.findOne({phoneNumber: "+3333333333"}),
-                        await userModel.findOne({phoneNumber: "+4444444444"})]
-    }})
+    await userModel.findByIdAndUpdate(Ivan._id, { $push: {
+        contactsList : [ Georgi, Petkan, Toni, Georgina
+    ]}});
 
 
-    await userModel.updateOne({phoneNumber : "+2222222222"}, {$push : {
-        contactsList : [await userModel.findOne({phoneNumber: "+3591234567"}),
-                        await userModel.findOne({phoneNumber: "+3333333333"}),
-                        await userModel.findOne({phoneNumber: "+4444444444"})]
-    }})
+    await userModel.findByIdAndUpdate(Petkan._id, { $push: {
+        contactsList : [ Georgi, Ivan, Toni, Georgina
+    ]}});
 
 
-    await userModel.updateOne({phoneNumber : "+3333333333"}, {$push : {
-        contactsList : [await userModel.findOne({phoneNumber: "+3591234567"}),
-                        await userModel.findOne({phoneNumber: "+2222222222"}),
-                        await userModel.findOne({phoneNumber: "+3333333333"}),
-                        await userModel.findOne({phoneNumber: "+4444444444"})]
-    }})
+    await userModel.findByIdAndUpdate(Toni._id, { $push: {
+        contactsList : [ Georgi, Ivan, Petkan, Georgina
+    ]}});
 
 
-    await userModel.updateOne({phoneNumber : "+4444444444"}, {$push : {
-        contactsList : [await userModel.findOne({phoneNumber: "+3591234567"}),
-                        await userModel.findOne({phoneNumber: "+2222222222"}),
-                        await userModel.findOne({phoneNumber: "+3333333333"})]
-    }})
+    await userModel.findByIdAndUpdate(Georgina._id, { $push: {
+        contactsList : [ Georgi, Ivan, Petkan, Toni
+    ]}});
 
     console.log('db ready')
 }
