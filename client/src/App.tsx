@@ -27,6 +27,9 @@ function App() {
   const [message,setMessage] = useState('')
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
   const [lastMessage, setLastMessage] = useState('');
+  const [contactsList, setContactsList] = useState([{}])
+  const [chosenContact, setChosenContact] = useState({name : '', phoneNumber : '', avatar : ''})
+  const [myAvatar, setMyAvatar] = useState('');
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -38,7 +41,7 @@ function App() {
     let data = await res.json()
     console.log(data)
     console.log(res.body)
-    // getUsersContacts(myphoneNumber)
+    getUsersContacts(myphoneNumber)
 
   }
 
@@ -49,10 +52,14 @@ function App() {
     })
 
     let data = await res.json()
+    setMyAvatar(data.avatar)
+    console.log(data.avatar)
 
     data.contactsList.forEach((element : Array<Object>) => {
       console.log(element)
     })
+
+    setContactsList(data.contactsList)
 
   }
 
@@ -79,6 +86,7 @@ function App() {
     let data = await res.json()
     setPhoneNumberChat(data.phoneNumber)
     setSocketIdChat(data.socketId)
+    setChosenContact(data)
 
   }
 
@@ -126,7 +134,7 @@ function App() {
 
                 <div className='sidebar'>
                   <div className='sidebar-header'>
-                          <Avatar color='action' src='myAvatar.jpg'/>
+                          <Avatar color='action' src={myAvatar}/>
                           <div className='sidebar-header-right'>
                           <DonutLargeIcon color='action'/>
                             <span onClick={getUser}>
@@ -143,16 +151,16 @@ function App() {
                   </div>
                   <div className='sidebar-list'   >
 
-                    {/* {contactsList.map((contact : any) =>
-                    <span key={contact} onClick={() => getUser2(contact.phoneNumber) }>
+                    {contactsList.map((contact : any, index : number) =>
+                    <span key={index} onClick={() => getUser2(contact.phoneNumber) }>
                       <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
-                    </span>)} */}
+                    </span>)}
 
 
-                      <span ><ChatItem title='Georgi' lastMessage={lastMessage}/></span>
+                      {/* <span ><ChatItem title='Georgi' lastMessage={lastMessage}/></span>
                       <span ><ChatItem title='Ivan' lastMessage='Hello'/></span>
                       <span ><ChatItem title='Petkan' lastMessage='Hello'/></span>
-                      <span ><ChatItem title='Toni' lastMessage='Hello'/></span>
+                      <span ><ChatItem title='Toni' lastMessage='Hello'/></span> */}
                   </div>
                   
                 </div>
@@ -160,9 +168,9 @@ function App() {
                 <div className='chat'>
                   <div className="bg-chat"></div>
                   <div className="chat-header">
-                    <Avatar id='image1' src="kiro.jpg" />
+                    <Avatar id='image1' src={chosenContact.avatar} />
                     <div className="chat-header-info">
-                        <span className='title'>Kiro Breika</span><br/>
+                        <span className='title'>{chosenContact.name}</span><br/>
                         <span className='info'>last seen at 05:00</span>
                     </div>
                     <div className="chat-header-right">
