@@ -1,6 +1,7 @@
 const {Mongose, Schema, model, default: mongoose} = require('mongoose') 
 
-const uri_db = 'mongodb://localhost/chatAppDB'
+// const uri_db = 'mongodb://localhost/chatAppDB'
+const uri_db = 'mongodb://mongodb-app:27017'
 
 const UserSchema = new Schema({
     name : String,

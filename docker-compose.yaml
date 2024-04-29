@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+
+  mongodb-app:
+    build: ./sever
+    container_name: mongoDB_c
+    image: mongo
+    ports:
+      - 27017:27017
+
+
+  chat-app-backend:
+    build: ./sever
+    container_name: backend_c
+    image: chatapp-backend:1.0.8
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb-app   
+
+  chat-app-frontend:
+    build: ./client
+    container_name: frontend_c
+    image: chatapp-frontend:1.0.0
+    ports:
+      - 3001:3001
+    depends_on:
+      - mongodb-app
+      - chat-app-backend        
+    stdin_open: true  
+    tty: true
