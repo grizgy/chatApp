@@ -12,9 +12,17 @@ import MicIcon from '@mui/icons-material/Mic';
 import io from 'socket.io-client'
 import { useEffect, useState } from 'react';
 
-const uri = 'http://localhost:3000'
-const socket = io(uri)
+
 const myphoneNumber = prompt('your number?','')
+
+
+const uri = 'http://localhost:3000'
+const socket = io(uri ,{
+  query : {
+    userId: myphoneNumber
+  }
+})
+
 
 // socket.on('connect', () => {
 //   console.log(`you connected with ID ${socket.id}`)
@@ -55,7 +63,7 @@ function App() {
     setMyAvatar(data.avatar)
     console.log(data.avatar)
 
-    data.contactsList.forEach((element : Array<Object>) => {
+      data.contactsList.forEach((element : Array<Object>) => {
       console.log(element)
     })
 
@@ -77,7 +85,7 @@ function App() {
 
   }
 
-  const getUser2 = async (number : number) => {
+  const getUserFromList = async (number : number) => {
     let res = await fetch(uri + '/user/' + number, {
       method : 'GET',
       headers : {'content-type' : 'application/json'}
@@ -93,7 +101,7 @@ function App() {
 
   const sendMsg = (e : any)=> {
     if(e.key == 'Enter') {
-      socket.emit('messages', {socketId : socketIdChat, message : message, from : {
+      socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
         socketId : mySocketId, phoneNumber : myphoneNumber
       }})
       setLastMessage(message)
@@ -116,7 +124,6 @@ function App() {
       setLastMessage(data.message)
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
-      setSocketIdChat(data.from.socketId)
 
     })
 
@@ -152,15 +159,10 @@ function App() {
                   <div className='sidebar-list'   >
 
                     {contactsList.map((contact : any, index : number) =>
-                    <span key={index} onClick={() => getUser2(contact.phoneNumber) }>
+                    <span key={index} onClick={() => getUserFromList(contact.phoneNumber) }>
                       <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
                     </span>)}
 
-
-                      {/* <span ><ChatItem title='Georgi' lastMessage={lastMessage}/></span>
-                      <span ><ChatItem title='Ivan' lastMessage='Hello'/></span>
-                      <span ><ChatItem title='Petkan' lastMessage='Hello'/></span>
-                      <span ><ChatItem title='Toni' lastMessage='Hello'/></span> */}
                   </div>
                   
                 </div>
@@ -168,7 +170,7 @@ function App() {
                 <div className='chat'>
                   <div className="bg-chat"></div>
                   <div className="chat-header">
-                    <Avatar id='image1' src={chosenContact.avatar} />
+                    <Avatar id='image1' src={chosenContact.name.length > 1 ? chosenContact.avatar : myAvatar} />
                     <div className="chat-header-info">
                         <span className='title'>{chosenContact.name}</span><br/>
                         <span className='info'>last seen at 05:00</span>
