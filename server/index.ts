@@ -7,7 +7,7 @@ const cors = require('cors')
 const io = Server(server, {
   cors:{
     origin : 'http://localhost:3001',
-    methods : ['GET','PUT']
+    methods : ['GET','PUT', 'POST']
   }
 })
 
@@ -34,10 +34,18 @@ app.get('/user/:phoneNumber', async (req : any, res : any) => {
 })
 
 
-app.put('/user', async (req : any, res : any) => {
-  const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
-  res.send(result)
-})
+// app.put('/user', async (req : any, res : any) => {
+//   const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+//   res.send(result)
+// })
+
+app.post('/user', async (req : any, res : any) => {
+        const newUser = await db.User.create({ phoneNumber: req.body.phoneNumber, socketId: '' });
+        await newUser.save();
+        res.status(201).json(newUser);
+});
+
+
 
 interface ConnectedUsers {
   [key: string]: Array<any>;
@@ -56,7 +64,7 @@ io.on('connection', (socket : any) => {
 
   connectedUsers[userId].push({socketId: socket.id, phoneNumber: userId})
 
-console.log(connectedUsers[userId])
+  console.log(connectedUsers[userId])
 
   console.log(socket.id);
   console.log('A user connected');
@@ -66,15 +74,19 @@ console.log(connectedUsers[userId])
 
     if (connectedUsers[data.phoneNumberChat] && Array.isArray(connectedUsers[data.phoneNumberChat])) { 
       const recipientSocket = connectedUsers[data.phoneNumberChat].filter(user => user.phoneNumber === data.phoneNumberChat); 
+      const senderSocket = connectedUsers[userId].filter(user => user.phoneNumber === userId); 
 
-      console.log("I AM REC")
-      console.log(recipientSocket)
+      // console.log("I AM REC")
+      // console.log(recipientSocket)
+
+      // console.log("I AM SENDER")
+      // console.log(senderSocket)
+      
       if(recipientSocket){
 
         recipientSocket.forEach(socket => {
           io.to(socket.socketId).emit('messages', data);
       });
-
 
       } else {
         console.log('Recipient is not connected');

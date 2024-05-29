@@ -24,10 +24,6 @@ const socket = io(uri ,{
 })
 
 
-// socket.on('connect', () => {
-//   console.log(`you connected with ID ${socket.id}`)
-// })
-
 function App() {
 
   const [phoneNumberChat, setPhoneNumberChat] = useState('')
@@ -41,7 +37,7 @@ function App() {
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
-      method : 'PUT',
+      method : 'POST',
       body : JSON.stringify({phoneNumber : myphoneNumber, socketId : socketId}),
       headers : {'content-type' : 'application/json'}
     })
@@ -74,14 +70,21 @@ function App() {
 
   const getUser = async () => {
     let number = prompt('type phone number','')
-    let res = await fetch(uri + '/user/' + number, {
-      method : 'GET',
-      headers : {'content-type' : 'application/json'}
-    })
 
-    let data = await res.json()
-    setPhoneNumberChat(data.phoneNumber)
-    setSocketIdChat(data.socketId)
+    if(number !== myphoneNumber) {
+
+      let res = await fetch(uri + '/user/' + number, {
+        method : 'GET',
+        headers : {'content-type' : 'application/json'}
+      })
+  
+      let data = await res.json()
+      setPhoneNumberChat(data.phoneNumber)
+      setSocketIdChat(data.socketId)
+
+    } else {
+      alert("Enter different phone number");
+    }
 
   }
 
@@ -104,12 +107,13 @@ function App() {
       socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
         socketId : mySocketId, phoneNumber : myphoneNumber
       }})
+
       setLastMessage(message)
       setMessage('')
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
-    }
-  }
+      }}
+      
 
   useEffect(()=> {
     socket.on('connect',()=>{
