@@ -37,7 +37,7 @@ function App() {
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
-      method : 'POST',
+      method : 'PUT',
       body : JSON.stringify({phoneNumber : myphoneNumber, socketId : socketId}),
       headers : {'content-type' : 'application/json'}
     })
@@ -58,7 +58,6 @@ function App() {
     let data = await res.json()
     setMyAvatar(data.avatar)
     console.log(data.avatar)
-
       data.contactsList.forEach((element : Array<Object>) => {
       console.log(element)
     })
@@ -102,14 +101,27 @@ function App() {
   }
 
 
-  const sendMsg = (e : any)=> {
+  const sendMsg = async (e : any)=> {
     if(e.key == 'Enter') {
+
+      let res = await fetch(uri + '/chats', {
+        method : 'PUT',
+        body : JSON.stringify({phoneNumberChat : phoneNumberChat, message: message, phoneNumber : myphoneNumber}),
+        headers : {'content-type' : 'application/json'}
+      })
+
+
+      let data = await res.json()
+      console.log(data)
+
+
       socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
         socketId : mySocketId, phoneNumber : myphoneNumber
       }})
 
       setLastMessage(message)
       setMessage('')
+      
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
       }}
@@ -174,7 +186,7 @@ function App() {
                 <div className='chat'>
                   <div className="bg-chat"></div>
                   <div className="chat-header">
-                    <Avatar id='image1' src={chosenContact.name.length > 1 ? chosenContact.avatar : myAvatar} />
+                    {/* <Avatar id='image1' src={chosenContact.name.length > 1 ? chosenContact.avatar : myAvatar} /> */}
                     <div className="chat-header-info">
                         <span className='title'>{chosenContact.name}</span><br/>
                         <span className='info'>last seen at 05:00</span>

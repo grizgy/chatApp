@@ -4,6 +4,7 @@ const uri_db = 'mongodb://localhost/chatAppDB'
 // const uri_db = 'mongodb://mongodb-app:27017'
 
 const UserSchema = new Schema({
+    // chat_ID : ChatSchema, 
     name : String,
     phoneNumber : String,
     contactsList : [],
@@ -11,13 +12,33 @@ const UserSchema = new Schema({
     avatar : String
 })
 
+
+const ChatSchema = new Schema({
+    content : [{
+        from_number : String,
+        to_number : String,
+        message_text : String,
+        sent_time : String
+    }]
+})
+
+
 const userModel = new model ('User', UserSchema)
+
+const chatModel = new model ('Chat', ChatSchema)
 
 module.exports.User = userModel
 
+module.exports.Chat = chatModel
+
 module.exports.init = async () => {
     await mongoose.connect(uri_db)
+
+
     await userModel.deleteMany({})
+    await chatModel.deleteMany({})
+
+
 
     const Georgi = await new userModel({name : 'Georgi', phoneNumber : '+3591234567', avatar : 'Georgi.jpg'}).save()
     const Ivan = await new userModel({name : 'Ivan', phoneNumber : '+3597654321', avatar : 'Ivan.jpg'}).save()
@@ -48,6 +69,7 @@ module.exports.init = async () => {
     await userModel.findByIdAndUpdate(Georgina._id, { $push: {
         contactsList : {$each : [Georgi, Ivan, Petkan, Toni]}
         }});
+        
 
     console.log('db ready')
 }

@@ -12,8 +12,6 @@ const io = Server(server, {
 })
 
 
-
-
 db.init()
 app.use(cors())
 app.use(express.json())
@@ -23,10 +21,6 @@ server.listen(3000, () => {
   console.log(`Listen on 3000`);
 }); 
 
-// app.get('/', (req : any, res : any) => {
-//   res.send('working')
-// })
-
 
 app.get('/user/:phoneNumber', async (req : any, res : any) => {
   const user = await db.User.findOne({phoneNumber : req.params.phoneNumber}).exec()
@@ -34,15 +28,68 @@ app.get('/user/:phoneNumber', async (req : any, res : any) => {
 })
 
 
-// app.put('/user', async (req : any, res : any) => {
-//   const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
-//   res.send(result)
-// })
+app.put('/user', async (req : any, res : any) => {
 
-app.post('/user', async (req : any, res : any) => {
-        const newUser = await db.User.create({ phoneNumber: req.body.phoneNumber, socketId: '' });
-        await newUser.save();
-        res.status(201).json(newUser);
+        const existingUser = await db.User.findOne({phoneNumber : req.body.phoneNumber})
+
+        if(req.body.phoneNumber !== null) {
+          if(existingUser) {
+            const result = await db.User.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+            res.send(result)
+          } else {
+            const newUser = await db.User.create({ phoneNumber: req.body.phoneNumber, socketId: req.body.socketId });
+            await newUser.save();
+            res.status(201).json(newUser);
+          }
+        }
+
+});
+
+
+
+
+app.put('/chats', async (req : any, res : any) => {
+
+      const existingChat = await db.User.findOne({ phoneNumber : req.body.phoneNumber , contactsList: { $elemMatch: { phoneNumber: req.body.phoneNumberChat } } })
+
+
+      const time = new Date();
+      const currentHour = time.getHours().toString().padStart(2, '0');
+      const currentMinute = time.getMinutes().toString().padStart(2, '0');
+
+
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+      console.log(existingChat)
+
+    if(existingChat) {
+
+      //  await db.Chat.updateOne( "Find the ChatID" , 
+      //   { $push: { content: { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
+      //     message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
+      //    } }})
+
+      const result = await db.Chat.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+      res.send(result)
+
+
+
+    } else {
+      const newChat = await db.Chat.create( {content : { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
+        message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
+       }});
+
+       const contactedUser = await db.User.findOne({phoneNumber: req.body.phoneNumberChat})
+       await db.User.updateOne({phoneNumber : req.body.phoneNumber}, 
+        { $push: { contactsList: contactedUser }})
+        
+
+
+
+      await newChat.save();
+      res.status(201).json(newChat);
+    }
+ 
+
 });
 
 
