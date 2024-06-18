@@ -34,6 +34,7 @@ function App() {
   const [contactsList, setContactsList] = useState([{}])
   const [chosenContact, setChosenContact] = useState({name : '', phoneNumber : '', avatar : ''})
   const [myAvatar, setMyAvatar] = useState('');
+  const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -103,34 +104,56 @@ function App() {
 
   const sendMsg = async (e : any)=> {
     if(e.key == 'Enter') {
+      if(message.trim() !== '') { 
 
-      let res = await fetch(uri + '/chats', {
-        method : 'PUT',
-        body : JSON.stringify({phoneNumberChat : phoneNumberChat, message: message, phoneNumber : myphoneNumber}),
-        headers : {'content-type' : 'application/json'}
-      })
+        let res = await fetch(uri + '/chats', {
+          method : 'PUT',
+          body : JSON.stringify({phoneNumberChat : phoneNumberChat, message: message, phoneNumber : myphoneNumber}),
+          headers : {'content-type' : 'application/json'}
+        })
+  
+  
+        let data = await res.json()
+        console.log(data)
 
+        console.log(myphoneNumber)
+        console.log(phoneNumberChat)
 
-      let data = await res.json()
-      console.log(data)
+        getUsersContacts(myphoneNumber)
 
+        socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
+          socketId : mySocketId, phoneNumber : myphoneNumber
+        }})
+  
+        setLastMessage(message)
+        setMessage('')
 
-      socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
-        socketId : mySocketId, phoneNumber : myphoneNumber
-      }})
+        console.log("Last message " + lastMessage)
+        
+        const chatBody = document.getElementById('chat-body')
+        chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
+       }}}
+       
 
-      setLastMessage(message)
-      setMessage('')
-      
-      const chatBody = document.getElementById('chat-body')
-      chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
-      }}
-      
+  useEffect(()=> {
+
+    if(contactsList[0] && Object.keys(contactsList[0]).length > 0) {
+
+      const renderContacts  = contactsList.map((contact : any, index : number) =>
+        <span key={index} onClick={() => getUserFromList(contact.phoneNumber) }>
+          <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
+        </span>)
+
+      setRenderedContacts(renderContacts)
+
+    }
+
+  }, [contactsList])     
 
   useEffect(()=> {
     socket.on('connect',()=>{
       console.log(socket.connected)
-      console.log('connected id' + socket.id)
+      console.log('connected id ' + socket.id)
       setMysocketId(socket.id)
       updateUser(socket.id)
     })
@@ -140,6 +163,8 @@ function App() {
       setLastMessage(data.message)
       const chatBody = document.getElementById('chat-body')
       chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
+
+      getUsersContacts(myphoneNumber)
 
     })
 
@@ -172,15 +197,7 @@ function App() {
                           <input placeholder='Search or start a new chat'/>
                       </div>
                   </div>
-                  <div className='sidebar-list'   >
-
-                    {contactsList.map((contact : any, index : number) =>
-                    <span key={index} onClick={() => getUserFromList(contact.phoneNumber) }>
-                      <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
-                    </span>)}
-
-                  </div>
-                  
+                  {renderedContacts}
                 </div>
 
                 <div className='chat'>

@@ -52,16 +52,15 @@ app.put('/chats', async (req : any, res : any) => {
 
       const existingChat = await db.User.findOne({ phoneNumber : req.body.phoneNumber , contactsList: { $elemMatch: { phoneNumber: req.body.phoneNumberChat } } })
 
-
       const time = new Date();
       const currentHour = time.getHours().toString().padStart(2, '0');
       const currentMinute = time.getMinutes().toString().padStart(2, '0');
 
-
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-      console.log(existingChat)
-
     if(existingChat) {
+
+      // const query = await db.Chat.findOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
+ 
+
 
       //  await db.Chat.updateOne( "Find the ChatID" , 
       //   { $push: { content: { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
@@ -71,22 +70,25 @@ app.put('/chats', async (req : any, res : any) => {
       const result = await db.Chat.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
       res.send(result)
 
-
-
     } else {
       const newChat = await db.Chat.create( {content : { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
         message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
        }});
 
-       const contactedUser = await db.User.findOne({phoneNumber: req.body.phoneNumberChat})
+       const contactedUser = await db.User.findOne({phoneNumber: req.body.phoneNumberChat} )
+
        await db.User.updateOne({phoneNumber : req.body.phoneNumber}, 
-        { $push: { contactsList: contactedUser }})
+        { $push: { contactsList: contactedUser , chat_ID : newChat} , $set: { chat_ID: newChat }  })
         
 
+        const contactingUser = await db.User.findOne({phoneNumber: req.body.phoneNumber})
+
+        await db.User.updateOne({phoneNumber : req.body.phoneNumberChat}, 
+         { $push: { contactsList: contactingUser, chat_ID : newChat }, $set: { chat_ID: newChat }})
 
 
-      await newChat.save();
-      res.status(201).json(newChat);
+        await newChat.save();
+        res.status(201).json(newChat);
     }
  
 
@@ -122,12 +124,6 @@ io.on('connection', (socket : any) => {
     if (connectedUsers[data.phoneNumberChat] && Array.isArray(connectedUsers[data.phoneNumberChat])) { 
       const recipientSocket = connectedUsers[data.phoneNumberChat].filter(user => user.phoneNumber === data.phoneNumberChat); 
       const senderSocket = connectedUsers[userId].filter(user => user.phoneNumber === userId); 
-
-      // console.log("I AM REC")
-      // console.log(recipientSocket)
-
-      // console.log("I AM SENDER")
-      // console.log(senderSocket)
       
       if(recipientSocket){
 
