@@ -11,6 +11,7 @@ import MicIcon from '@mui/icons-material/Mic';
 
 import io from 'socket.io-client'
 import { useEffect, useState } from 'react';
+import ChatBody from './components/chat-body';
 
 
 const myphoneNumber = prompt('your number?','')
@@ -35,6 +36,9 @@ function App() {
   const [chosenContact, setChosenContact] = useState({name : '', phoneNumber : '', avatar : ''})
   const [myAvatar, setMyAvatar] = useState('');
   const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
+
+  const [messageReceived,setMessageReceived] = useState('')
+  const [messageSent,setMessageSent] = useState('')
 
   const updateUser = async (socketId : any) => {
     let res = await fetch(uri + '/user', {
@@ -125,13 +129,12 @@ function App() {
           socketId : mySocketId, phoneNumber : myphoneNumber
         }})
   
+        setMessageSent(message)
         setLastMessage(message)
         setMessage('')
-
-        console.log("Last message " + lastMessage)
         
-        const chatBody = document.getElementById('chat-body')
-        chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
+        // const chatBody = document.getElementById('chat-body')
+        // chatBody!.innerHTML += '<span class="messages-out">' + message + '</span><br/>'
        }}}
        
 
@@ -141,7 +144,7 @@ function App() {
 
       const renderContacts  = contactsList.map((contact : any, index : number) =>
         <span key={index} onClick={() => getUserFromList(contact.phoneNumber) }>
-          <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/>
+          <ChatItem avatar={contact.avatar} title={contact.name} lastMessage={contact.lastMessage}/> {/* get the last message from the chatID */}
         </span>)
 
       setRenderedContacts(renderContacts)
@@ -161,10 +164,13 @@ function App() {
     socket.on('messages', (data : any)=>{
 
       setLastMessage(data.message)
-      const chatBody = document.getElementById('chat-body')
-      chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
+    //   const chatBody = document.getElementById('chat-body')
+    //   chatBody!.innerHTML += '<span class="messages-in">' + data.message + '</span><br/>'
 
       getUsersContacts(myphoneNumber)
+      setMessageReceived(data.message)
+      setSocketIdChat(data.from.socketId)
+      console.log(data)
 
     })
 
@@ -213,9 +219,9 @@ function App() {
                         <MoreVertIcon color='action'/>
                     </div>
                   </div>
-                  <div id='chat-body' className="chat-body">
 
-                  </div>
+                    <ChatBody id='chat-body' className="chat-body" chosenContact={socketIdChat} message={messageSent} messageReceived={messageReceived}>
+                    </ChatBody>
                   <div className="chat-footer">
                     <div className="chat-footer-actions">
                         <InsertEmoticonIcon color='action'/>

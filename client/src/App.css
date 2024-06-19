@@ -58,7 +58,7 @@
 .chat{
   position: relative;
   display: grid;
-  grid-template-rows: 60px auto 60px;
+  grid-template-rows: 60px calc(90vh - 120px) 60px;
 }
 
 .bg-chat{
@@ -118,7 +118,7 @@
   padding: 12px;
 }
 
-.messages-in{
+/* .messages-in{
   position: absolute;
   background-color: #ffffff;
   padding: 4px;
@@ -131,4 +131,4 @@
   background-color: #d9fdd3;
   border-radius: 5px;
   padding: 4px;
-}
+} */

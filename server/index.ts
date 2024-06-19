@@ -24,6 +24,7 @@ server.listen(3000, () => {
 
 app.get('/user/:phoneNumber', async (req : any, res : any) => {
   const user = await db.User.findOne({phoneNumber : req.params.phoneNumber}).exec()
+  console.log(user)
   res.send(user)
 })
 
@@ -52,6 +53,8 @@ app.put('/chats', async (req : any, res : any) => {
 
       const existingChat = await db.User.findOne({ phoneNumber : req.body.phoneNumber , contactsList: { $elemMatch: { phoneNumber: req.body.phoneNumberChat } } })
 
+      console.log(existingChat)
+      
       const time = new Date();
       const currentHour = time.getHours().toString().padStart(2, '0');
       const currentMinute = time.getMinutes().toString().padStart(2, '0');
@@ -78,13 +81,13 @@ app.put('/chats', async (req : any, res : any) => {
        const contactedUser = await db.User.findOne({phoneNumber: req.body.phoneNumberChat} )
 
        await db.User.updateOne({phoneNumber : req.body.phoneNumber}, 
-        { $push: { contactsList: contactedUser , chat_ID : newChat} , $set: { chat_ID: newChat }  })
+        { $push: { contactsList: contactedUser } , $set: { chat_ID: newChat }  })
         
 
         const contactingUser = await db.User.findOne({phoneNumber: req.body.phoneNumber})
 
         await db.User.updateOne({phoneNumber : req.body.phoneNumberChat}, 
-         { $push: { contactsList: contactingUser, chat_ID : newChat }, $set: { chat_ID: newChat }})
+         { $push: { contactsList: contactingUser }, $set: { chat_ID: newChat }})
 
 
         await newChat.save();
