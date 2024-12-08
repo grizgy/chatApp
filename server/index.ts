@@ -24,7 +24,6 @@ server.listen(3000, () => {
 
 app.get('/user/:phoneNumber', async (req : any, res : any) => {
   const user = await db.User.findOne({phoneNumber : req.params.phoneNumber}).exec()
-  console.log(user)
   res.send(user)
 })
 
@@ -50,44 +49,61 @@ app.put('/user', async (req : any, res : any) => {
 
 
 app.put('/chats', async (req : any, res : any) => {
+  
+  // Find the correct chat !! 
+      
+      const existingChat = await db.Chat.findOne({
+        $or: [
+          {
+            content: {
+              $elemMatch: {
+                from_number: req.body.phoneNumber,
+                to_number: req.body.phoneNumberChat
+              }
+            }
+          },
+          {
+            content: {
+              $elemMatch: {
+                from_number: req.body.phoneNumberChat,
+                to_number: req.body.phoneNumber
+              }
+            }
+          }
+        ]
+      });
 
-      const existingChat = await db.User.findOne({ phoneNumber : req.body.phoneNumber , contactsList: { $elemMatch: { phoneNumber: req.body.phoneNumberChat } } })
-
-      console.log(existingChat)
       
       const time = new Date();
       const currentHour = time.getHours().toString().padStart(2, '0');
       const currentMinute = time.getMinutes().toString().padStart(2, '0');
 
-    if(existingChat) {
+    if(existingChat !== null) {
+     
+      const result = await db.Chat.updateOne(
+        { _id: existingChat._id }, 
+        { $push: { content: [ {from_number : req.body.phoneNumber, to_number: req.body.phoneNumberChat, message_text : req.body.message, sent_time : currentHour + ":" + currentMinute }] } } // $push to add new message to the content array
+    )
 
-      // const query = await db.Chat.findOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
- 
-
-
-      //  await db.Chat.updateOne( "Find the ChatID" , 
-      //   { $push: { content: { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
-      //     message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
-      //    } }})
-
-      const result = await db.Chat.updateOne({phoneNumber : req.body.phoneNumber}, {socketId : req.body.socketId})
       res.send(result)
 
     } else {
+
+/// TO UPDATE THE NO FIELD AND TO INSERT THE NEW CHAT TO BE YES AFTER SENDING NEW MESSAGE !!!
       const newChat = await db.Chat.create( {content : { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
         message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
        }});
 
        const contactedUser = await db.User.findOne({phoneNumber: req.body.phoneNumberChat} )
 
-       await db.User.updateOne({phoneNumber : req.body.phoneNumber}, 
-        { $push: { contactsList: contactedUser } , $set: { chat_ID: newChat }  })
+      await db.User.updateOne({phoneNumber : req.body.phoneNumber}, 
+        { $push: { contactsList: contactedUser}})
         
 
         const contactingUser = await db.User.findOne({phoneNumber: req.body.phoneNumber})
 
         await db.User.updateOne({phoneNumber : req.body.phoneNumberChat}, 
-         { $push: { contactsList: contactingUser }, $set: { chat_ID: newChat }})
+         { $push: { contactsList:{ contact: contactingUser, id: newChat._id}}})
 
 
         await newChat.save();
