@@ -103,7 +103,7 @@ app.put('/chats', async (req : any, res : any) => {
         const contactingUser = await db.User.findOne({phoneNumber: req.body.phoneNumber})
 
         await db.User.updateOne({phoneNumber : req.body.phoneNumberChat}, 
-         { $push: { contactsList:{ contact: contactingUser, id: newChat._id}}})
+         { $push: { contactsList: contactingUser}})
 
 
         await newChat.save();
@@ -113,6 +113,31 @@ app.put('/chats', async (req : any, res : any) => {
 
 });
 
+
+app.get('/chats/:myphoneNumber/:contactedNumber', async (req : any, res : any) => {
+
+  const chat = await db.Chat.findOne({
+    $or: [
+      {
+        content: {
+          $elemMatch: {
+            from_number: req.params.contactedNumber,
+            to_number: req.params.myphoneNumber  
+          }
+        }
+      },
+      {
+        content: {
+          $elemMatch: {
+            from_number: req.params.myphoneNumber,  
+            to_number: req.params.contactedNumber
+          }
+        }
+      }
+    ]
+  }).exec()
+  res.send(chat)
+})
 
 
 interface ConnectedUsers {
@@ -155,6 +180,8 @@ io.on('connection', (socket : any) => {
       }
 
     } else {
+
+      // set the top contact in the chat as receiver
       console.log(`Invalid data for socketId: ${data.socketId}`);
     }
 

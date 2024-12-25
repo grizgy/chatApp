@@ -34,7 +34,7 @@ function App() {
   const [message,setMessage] = useState('')
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
   const [lastMessage, setLastMessage] = useState('');
-  const [contactsList, setContactsList] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', id: ''}])
+  const [contactsList, setContactsList] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''}])
   const [chosenContact, setChosenContact] = useState({name : '', phoneNumber : '', avatar : ''})
   const [myAvatar, setMyAvatar] = useState('');
   const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
@@ -66,12 +66,30 @@ function App() {
 
     let data = await res.json()
     setMyAvatar(data.avatar)
-    console.log(data.avatar)
-      data.contactsList.forEach((element : Array<Object>) => {
-      console.log(element)
-    })
+    console.log(data.contactsList)
+
+
+    const contactsWithLastMessages = await Promise.all(data.contactsList.map(async (element: any) => {
+      let lastMessage = await getLastMessage(element.phoneNumber);
+      element.lastMessage = lastMessage;
+      return element; // Return the updated element
+    }));
 
     setContactsList(data.contactsList)
+
+    let lastMessage;
+
+    if(phoneNumberChat !== '') {
+      console.log(phoneNumberChat)
+       lastMessage = await getLastMessage(phoneNumberChat)
+    } else {
+      console.log(data.contactsList[0])
+      setPhoneNumberChat(data.contactsList[0])
+       lastMessage = await getLastMessage(data.contactsList[0].phoneNumber)
+    }
+
+      console.log(lastMessage)
+
 
   }
 
@@ -150,7 +168,6 @@ function App() {
         }})
   
         setMessageSent(message)
-        setLastMessage(message)
         setMessage('')
        }}}
        
@@ -165,13 +182,15 @@ function App() {
 
       const renderContacts  = contactsList.map((contact : any, index : number) =>
         <span key={index} onClick={() => getUserFromList(contact.phoneNumber) }>
-          { <ChatItem avatar={contactsList[index].avatar} title={contactsList[index].name}  lastMessage={contact.lastMessage}/>  }
+          { <ChatItem avatar={contactsList[index].avatar} title={contactsList[index].name}  lastMessage={contactsList[index].lastMessage}/>  }
           {/* get the last message from the chatID */}
         </span>)
 
       setRenderedContacts(renderContacts)
 
     }
+
+    console.log("ContactsList changed")
 
   }, [contactsList])     
 
@@ -185,7 +204,6 @@ function App() {
 
     socket.on('messages', (data : any)=>{
 
-      setLastMessage(data.message)
       getUsersContacts(myphoneNumber)
       setMessageReceived(data.message)
       setSocketIdChat(data.from.socketId)
@@ -199,6 +217,20 @@ function App() {
     }
   },[])
 
+
+  const getLastMessage = async (contactedNumber : any) => {
+
+    let res = await fetch(uri + '/chats/' + myphoneNumber + '/' + contactedNumber, {
+    method : 'GET',
+    headers : {'content-type' : 'application/json'}
+  })
+
+  let data = await res.json()
+  const length = data.content.length 
+  setPhoneNumberChat(contactedNumber)
+  return data.content[length-1].message_text; // retrieving the last message from each chat
+
+}
 
 
   return (

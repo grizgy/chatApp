@@ -48,7 +48,7 @@ module.exports.init = async () => {
 
     const GeorgiIvan = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Ivan.phoneNumber, message_text : "ZDR. Vanka", sent_time : "14:25"}] }).save()
     const GeorgiPetkan = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Petkan.phoneNumber, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
-    const GeorgiToni = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Ivan.phoneNumber, message_text : "ZDR. Tonka", sent_time : "14:25"}] }).save()
+    const GeorgiToni = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Toni.phoneNumber, message_text : "ZDR. Tonka", sent_time : "14:25"}] }).save()
     const GeorgiGeorgina = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Georgina.phoneNumber, message_text : "ZDR. Georgina", sent_time : "14:25"}] }).save()
 
     const IvanPetkan = await new chatModel({ content: [{from_number : Ivan.phoneNumber, to_number : Petkan.phoneNumber, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
