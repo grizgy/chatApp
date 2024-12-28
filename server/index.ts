@@ -7,7 +7,7 @@ const cors = require('cors')
 const io = Server(server, {
   cors:{
     origin : 'http://localhost:3001',
-    methods : ['GET','PUT', 'POST']
+    methods : ['GET','PUT', 'POST','PATCH']
   }
 })
 
@@ -112,6 +112,17 @@ app.put('/chats', async (req : any, res : any) => {
  
 
 });
+
+
+app.patch('/user', async (req : any, res : any) => { 
+
+      const result = await db.User.updateOne({ phoneNumber : req.body.phoneNumber }, 
+        { $set: { contactsList: req.body.newArray } } 
+      )
+
+      res.send(result)     
+
+})
 
 
 app.get('/chats/:myphoneNumber/:contactedNumber', async (req : any, res : any) => {

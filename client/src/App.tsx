@@ -149,7 +149,19 @@ function App() {
         console.log(myphoneNumber)
         console.log(phoneNumberChat)
 
+        contactsList.forEach(function(item : any, index : number) {
+          if(item.phoneNumber === phoneNumberChat) {
+            contactsList.splice(index, 1) // Remove the element from its original position
+            contactsList.unshift(item)    // Insert the element at the beginning of the array
+
+            replaceElementInDB(contactsList)  // function to put the last contacted chat on the top of the DB
+
+          }
+        })
+
         getUsersContacts(myphoneNumber)
+
+        console.log(contactsList)
 
         let contact;
 
@@ -170,6 +182,21 @@ function App() {
         setMessageSent(message)
         setMessage('')
        }}}
+
+
+       const replaceElementInDB = async (arr : any[])=> {
+
+        let res = await fetch(uri + '/user', {
+          method : 'PATCH',
+          body : JSON.stringify({newArray : arr, phoneNumber : myphoneNumber}),
+          headers : {'content-type' : 'application/json'}
+        })
+
+        let data = await res.json()
+        console.log(data)
+
+
+       }
        
 
   useEffect(()=> {
@@ -191,6 +218,7 @@ function App() {
     }
 
     console.log("ContactsList changed")
+    console.log(contactsList)
 
   }, [contactsList])     
 
