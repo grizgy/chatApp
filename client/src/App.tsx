@@ -33,9 +33,9 @@ function App() {
   const [socketIdChat,setSocketIdChat] = useState('')
   const [message,setMessage] = useState('')
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
-  const [lastMessage, setLastMessage] = useState('');
   const [contactsList, setContactsList] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''}])
-  const [chosenContact, setChosenContact] = useState({name : '', phoneNumber : '', avatar : ''})
+  const [contactsListContacted, setContactsListContacted] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''}])
+  const [chosenContact, setChosenContact] = useState({avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''})
   const [myAvatar, setMyAvatar] = useState('');
   const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
 
@@ -66,8 +66,6 @@ function App() {
 
     let data = await res.json()
     setMyAvatar(data.avatar)
-    console.log(data.contactsList)
-
 
     const contactsWithLastMessages = await Promise.all(data.contactsList.map(async (element: any) => {
       let lastMessage = await getLastMessage(element.phoneNumber);
@@ -75,21 +73,8 @@ function App() {
       return element; // Return the updated element
     }));
 
+    console.log(data.contactsList)
     setContactsList(data.contactsList)
-
-    let lastMessage;
-
-    if(phoneNumberChat !== '') {
-      console.log(phoneNumberChat)
-       lastMessage = await getLastMessage(phoneNumberChat)
-    } else {
-      console.log(data.contactsList[0])
-      setPhoneNumberChat(data.contactsList[0])
-       lastMessage = await getLastMessage(data.contactsList[0].phoneNumber)
-    }
-
-      console.log(lastMessage)
-
 
   }
 
@@ -105,9 +90,9 @@ function App() {
       })
   
       let data = await res.json()
-      console.log(typeof data)
-      console.log(data.phoneNumber)
-      console.log(data.socketId)
+      console.log(data)
+      setChosenContact(data)
+      setContactsListContacted(data.contactsList)
       setContactedId(data.socketId)
       setPhoneNumberChat(data.phoneNumber)
       setSocketIdChat(data.socketId)
@@ -125,7 +110,12 @@ function App() {
     })
 
     let data = await res.json()
+    setContactsListContacted(data.contactsList)
+    setContactedId(data.socketId)
+    console.log(contactsListContacted)
+    console.log(contactsList)
     setPhoneNumberChat(data.phoneNumber)
+    console.log(phoneNumberChat)
     setSocketIdChat(data.socketId)
     setChosenContact(data)
 
@@ -145,35 +135,71 @@ function App() {
   
         let data = await res.json()
         console.log(data)
-
         console.log(myphoneNumber)
         console.log(phoneNumberChat)
+        console.log(contactsList)
+        console.log(chosenContact)
+        console.log(contactsListContacted)
+
+        // if (contactsList.includes(chosenContact)) {
+
+        //   const updatedContactsList = contactsList.filter(contact => contact !== chosenContact);
+        //   console.log(updatedContactsList)
+        //   updatedContactsList.unshift(chosenContact);
+
+        //   setContactsList(updatedContactsList);
+        //   console.log(contactsList)
+
+        // }
+
+
+        // const updatedContactsList = contactsList.find(contact => contact.phoneNumber == phoneNumberChat)
+
+        // if (updatedContactsList) {
+        //   console.log(updatedContactsList)
+
+        //     const index = contactsList.findIndex(updatedContactsList.phoneNumber)
+        //     contactsList.splice(index, 1) // Remove the element from its original position
+        //     contactsList.unshift(item)    // Insert the element at the beginning of the array
+
+        //     replaceElementInDB(contactsList, myphoneNumber)
+
+
+        // } else {
+        //   console.log("Not existing")
+        // }
+      
+        console.log(contactsList)
+
+        console.log(chosenContact)
 
         contactsList.forEach(function(item : any, index : number) {
           if(item.phoneNumber === phoneNumberChat) {
             contactsList.splice(index, 1) // Remove the element from its original position
             contactsList.unshift(item)    // Insert the element at the beginning of the array
 
-            replaceElementInDB(contactsList)  // function to put the last contacted chat on the top of the DB
+            replaceElementInDB(contactsList, myphoneNumber)  // function to put the last contacted chat on the top of the DB
 
           }
         })
 
+        console.log(contactsList)
+
+        contactsListContacted.forEach(function(item : any, index : number) {
+          if(item.phoneNumber === myphoneNumber) {
+            contactsListContacted.splice(index, 1) // Remove the element from its original position
+            contactsListContacted.unshift(item)    // Insert the element at the beginning of the array
+
+            replaceElementInDB(contactsListContacted, phoneNumberChat)  // function to put the last contacted chat on the top of the DB
+
+          }
+        })
+
+        console.log(contactsListContacted)
+
         getUsersContacts(myphoneNumber)
 
         console.log(contactsList)
-
-        let contact;
-
-        if(phoneNumberChat !== null) {
-          contact = phoneNumberChat
-          console.log("phoneNumberChat doesn't exist")
-        } else{
-          contact = contactsList[0].phoneNumber
-          console.log("phoneNumberChat exists")
-        }
-
-        console.log(contact)
 
         socket.emit('messages', {socketId : socketIdChat, phoneNumberChat: phoneNumberChat, message : message, from : {
           socketId : mySocketId, phoneNumber : myphoneNumber
@@ -184,11 +210,11 @@ function App() {
        }}}
 
 
-       const replaceElementInDB = async (arr : any[])=> {
+       const replaceElementInDB = async (arr : any[], phoneNumber : any )=> {
 
         let res = await fetch(uri + '/user', {
           method : 'PATCH',
-          body : JSON.stringify({newArray : arr, phoneNumber : myphoneNumber}),
+          body : JSON.stringify({newArray : arr, phoneNumber : phoneNumber}),
           headers : {'content-type' : 'application/json'}
         })
 
@@ -235,6 +261,7 @@ function App() {
       getUsersContacts(myphoneNumber)
       setMessageReceived(data.message)
       setSocketIdChat(data.from.socketId)
+      console.log(contactsListContacted)
       console.log(data)
 
     })
@@ -255,7 +282,7 @@ function App() {
 
   let data = await res.json()
   const length = data.content.length 
-  setPhoneNumberChat(contactedNumber)
+  console.log(phoneNumberChat)
   return data.content[length-1].message_text; // retrieving the last message from each chat
 
 }
