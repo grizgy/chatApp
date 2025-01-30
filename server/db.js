@@ -46,20 +46,20 @@ module.exports.init = async () => {
     const Toni = await new userModel({name : 'Toni', phoneNumber : '3', avatar : 'Toni.jpg'}).save()
     const Georgina = await new userModel({name : 'Georgina', phoneNumber : '+4444444444', avatar : 'Georgina.jpg'}).save()
 
-    const GeorgiIvan = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Ivan.phoneNumber, message_text : "ZDR. Vanka", sent_time : "14:25"}] }).save()
-    const GeorgiPetkan = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Petkan.phoneNumber, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
-    const GeorgiToni = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Toni.phoneNumber, message_text : "ZDR. Tonka", sent_time : "14:25"}] }).save()
-    const GeorgiGeorgina = await new chatModel({ content: [{from_number : Georgi.phoneNumber, to_number : Georgina.phoneNumber, message_text : "ZDR. Georgina", sent_time : "14:25"}] }).save()
+    const GeorgiIvan = await new chatModel({ content: [{from_number : Georgi._id, to_number : Ivan._id, message_text : "ZDR. Vanka", sent_time : "14:25"}] }).save()
+    const GeorgiPetkan = await new chatModel({ content: [{from_number : Georgi._id, to_number : Petkan._id, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
+    const GeorgiToni = await new chatModel({ content: [{from_number : Georgi._id, to_number : Toni._id, message_text : "ZDR. Tonka", sent_time : "14:25"}] }).save()
+    const GeorgiGeorgina = await new chatModel({ content: [{from_number : Georgi._id, to_number : Georgina._id, message_text : "ZDR. Georgina", sent_time : "14:25"}] }).save()
 
-    const IvanPetkan = await new chatModel({ content: [{from_number : Ivan.phoneNumber, to_number : Petkan.phoneNumber, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
-    const IvanToni = await new chatModel({ content: [{from_number : Ivan.phoneNumber, to_number : Toni.phoneNumber, message_text : "ZDR. Toni", sent_time : "14:25"}] }).save()
-    const IvanGeorgina = await new chatModel({ content: [{from_number : Ivan.phoneNumber, to_number : Georgina.phoneNumber, message_text : "ZDR. Georgina", sent_time : "14:25"}] }).save()
+    const IvanPetkan = await new chatModel({ content: [{from_number : Ivan._id, to_number : Petkan._id, message_text : "ZDR. Petkan", sent_time : "14:25"}] }).save()
+    const IvanToni = await new chatModel({ content: [{from_number : Ivan._id, to_number : Toni._id, message_text : "ZDR. Toni", sent_time : "14:25"}] }).save()
+    const IvanGeorgina = await new chatModel({ content: [{from_number : Ivan._id, to_number : Georgina._id, message_text : "ZDR. Georgina", sent_time : "14:25"}] }).save()
 
 
-    const PetkanToni = await new chatModel({ content: [{from_number : Petkan.phoneNumber, to_number : Toni.phoneNumber, message_text : "ZDR. Tonkaaaa", sent_time : "14:25"}] }).save()
-    const PetkanGeorgina = await new chatModel({ content: [{from_number : Petkan.phoneNumber, to_number : Georgina.phoneNumber, message_text : "ZDR. Georginaaaaaaaaa", sent_time : "14:25"}] }).save()
+    // const PetkanToni = await new chatModel({ content: [{from_number : Petkan._id, to_number : Toni._id, message_text : "ZDR. Tonkaaaa", sent_time : "14:25"}] }).save()
+    const PetkanGeorgina = await new chatModel({ content: [{from_number : Petkan._id, to_number : Georgina._id, message_text : "ZDR. Georginaaaaaaaaa", sent_time : "14:25"}] }).save()
 
-    const ToniGeorgina = await new chatModel({ content: [{from_number : Toni.phoneNumber, to_number : Georgina.phoneNumber, message_text : "ZDR. Georginaaaaaaaaa", sent_time : "14:25"}] }).save()
+    const ToniGeorgina = await new chatModel({ content: [{from_number : Toni._id, to_number : Georgina._id, message_text : "ZDR. Georginaaaaaaaaa", sent_time : "14:25"}] }).save()
 
 
     // await userModel.findByIdAndUpdate(Georgi._id, { $push: {
@@ -98,12 +98,12 @@ module.exports.init = async () => {
 
 
     await userModel.findByIdAndUpdate(Petkan._id, { $push: {
-        contactsList : { $each: [Georgi, Ivan, Toni, Georgina]}
+        contactsList : { $each: [Georgi, Ivan, Georgina]}
     }});
 
 
     await userModel.findByIdAndUpdate(Toni._id, { $push: {
-        contactsList : {$each : [Georgi, Ivan, Petkan, Georgina]} 
+        contactsList : {$each : [Georgi, Ivan, Georgina]} 
         }});
 
 

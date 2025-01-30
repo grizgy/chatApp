@@ -57,16 +57,16 @@ app.put('/chats', async (req : any, res : any) => {
           {
             content: {
               $elemMatch: {
-                from_number: req.body.phoneNumber,
-                to_number: req.body.phoneNumberChat
+                from_number: req.body.myID,
+                to_number: req.body.contactedId
               }
             }
           },
           {
             content: {
               $elemMatch: {
-                from_number: req.body.phoneNumberChat,
-                to_number: req.body.phoneNumber
+                from_number: req.body.contactedId,
+                to_number: req.body.myID
               }
             }
           }
@@ -82,7 +82,7 @@ app.put('/chats', async (req : any, res : any) => {
      
       const result = await db.Chat.updateOne(
         { _id: existingChat._id }, 
-        { $push: { content: [ {from_number : req.body.phoneNumber, to_number: req.body.phoneNumberChat, message_text : req.body.message, sent_time : currentHour + ":" + currentMinute }] } } // $push to add new message to the content array
+        { $push: { content: [ {from_number : req.body.myID, to_number: req.body.contactedId, message_text : req.body.message, sent_time : currentHour + ":" + currentMinute }] } } // $push to add new message to the content array
     )
 
       res.send(result)
@@ -90,7 +90,7 @@ app.put('/chats', async (req : any, res : any) => {
     } else {
 
 /// TO UPDATE THE NO FIELD AND TO INSERT THE NEW CHAT TO BE YES AFTER SENDING NEW MESSAGE !!!
-      const newChat = await db.Chat.create( {content : { from_number: req.body.phoneNumber, to_number: req.body.phoneNumberChat, 
+      const newChat = await db.Chat.create( {content : { from_number: req.body.myID, to_number: req.body.contactedId, 
         message_text: req.body.message, sent_time: currentHour + ":" + currentMinute
        }});
 
@@ -125,23 +125,23 @@ app.patch('/user', async (req : any, res : any) => {
 })
 
 
-app.get('/chats/:myphoneNumber/:contactedNumber', async (req : any, res : any) => {
+app.get('/chats/:myID/:contactedID', async (req : any, res : any) => {
 
   const chat = await db.Chat.findOne({
     $or: [
       {
         content: {
           $elemMatch: {
-            from_number: req.params.contactedNumber,
-            to_number: req.params.myphoneNumber  
+            from_number: req.params.contactedID,
+            to_number: req.params.myID  
           }
         }
       },
       {
         content: {
           $elemMatch: {
-            from_number: req.params.myphoneNumber,  
-            to_number: req.params.contactedNumber
+            from_number: req.params.myID,  
+            to_number: req.params.contactedID
           }
         }
       }
