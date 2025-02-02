@@ -170,7 +170,7 @@ io.on('connection', (socket : any) => {
 
   console.log(connectedUsers[userId])
 
-  console.log(socket.id);
+  // console.log(socket.id);
   console.log('A user connected');
 
 
