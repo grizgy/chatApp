@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: 8px 40px auto;
     margin: 16px 0px;
+    overflow: hidden;
 }
 
 .item-info{

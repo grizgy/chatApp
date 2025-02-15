@@ -39,7 +39,8 @@ function App() {
   const socketIdChat = useRef('');
   const phoneNumberChat = useRef('');
   const myID = useRef('');
-  const chatId = useRef('');
+  // const chatId = useRef('');
+  const [chatId,setChatId] = useState('')
   const [myAvatar, setMyAvatar] = useState('');
   const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
 
@@ -91,11 +92,12 @@ function App() {
       console.log(myChatInfo)
 
       myChatInfo.then((res) => {
-        chatId.current = res 
-        console.log(chatId.current)
+        // chatId.current = res 
+        setChatId(res)
+        console.log(chatId)
       })
 
-      console.log(chatId.current)
+      console.log(chatId)
 
   }
 
@@ -107,21 +109,41 @@ function App() {
     })
 
     let data = await res.json()
+
+    // methods that display the messages in the chat box 
     setChosenContact(data)
     setContactsListContacted(data.contactsList)
+
+
+
+
     // setContactedId(data._id)
     contactedId.current = data._id
     console.log(contactedId.current)
+
+
+    // let res2 = await fetch(uri + '/chats/' + myID.current + '/' + contactedId.current, {
+    //   method : 'GET',
+    //   headers : {'content-type' : 'application/json'}
+    //   })
+
+    //   let data2 = await res2.json()
+
+
+    //   console.log(data2.content)
+    //   chatId.current = data2.content
+    //   console.log(chatId.current)
 
     let myChatInfo = getAllMessages(myID.current,contactedId.current)
     console.log(myChatInfo)
 
     myChatInfo.then((res) => {
-      chatId.current = res 
-      console.log(chatId.current)
+      // chatId.current = res
+      setChatId(res) 
+      console.log(chatId)
     })
 
-    console.log(chatId.current)
+    console.log(chatId)
     console.log(contactsListContacted)
     console.log(contactsList)
     // setPhoneNumberChat(data.phoneNumber)
@@ -165,7 +187,7 @@ function App() {
             console.log(item)
               console.log(contactedId)
   
-            if(item._id === contactedId) {
+            if(item._id === contactedId.current) {
   
               console.log(item)
               console.log(contactedId)
@@ -307,6 +329,7 @@ function App() {
       socketIdChat.current = data.from.socketId 
       console.log(contactsListContacted)
       console.log(data)
+      console.log(socketIdChat.current)
 
     })
 
@@ -395,7 +418,11 @@ function App() {
                     </div>
                   </div>
 
-                    <ChatBody id='chat-body' className="chat-body" myID = {myID.current} contactedId = {contactedId.current}  chatInfo = {chatId.current}>
+                            {/* {chatId.current == ''?  <></> :  <ChatBody id='chat-body' className="chat-body" myID = {myID.current} contactedId = {contactedId.current}  chatInfo = {chatId.current}>
+                            </ChatBody>} */}
+                           
+
+                    <ChatBody id='chat-body' className="chat-body" myID = {myID.current} contactedId = {contactedId.current}  chatInfo = {chatId}>
                     </ChatBody>
                   <div className="chat-footer">
                     <div className="chat-footer-actions">

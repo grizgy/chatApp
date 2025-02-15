@@ -1,38 +1,44 @@
 .chat-body{
-  /* display: grid; */
-  /* grid-template-rows:  auto ; */
+  display: grid;
+  grid-auto-rows: min-content;
+  grid-template-columns: 1fr 1fr;
   position: relative;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
+  gap: 10px
 }
 
 .msg-out{
   display: inline;
-  position: absolute;
+  position: relative;
+  /* left: 54%; */
   background-color: #d9fdd3;
   padding: 4px;
   border-radius: 5px;
-  max-width: 45%;
-  right: 0;
+  max-width: 90%;
+  grid-column: 2;
+  justify-self: end;
 }
 
 .messages-out{
   background-color: #d9fdd3;
   border-radius: 5px;
   padding: 4px;
+  margin: 4px;
   word-wrap: break-word;
   position: relative;
-  right: 0;
 }
 
 
 .msg-in{
   display: inline;
-  position: absolute;
+  position: relative;
   background-color: #ffffff;
   padding: 4px;
   border-radius: 5px;
-  max-width: 45%;
+  max-width: 90%;
+  grid-column: 1;
+  justify-self: start;
 }
 
 
