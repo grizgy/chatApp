@@ -88,6 +88,14 @@ function App() {
 
     console.log(data.contactsList)
     setContactsList(data.contactsList)
+    console.log(data.chosenContact._id)
+
+    if(contactedId.current == '') {
+      contactedId.current = data.chosenContact._id;
+      console.log(contactedId.current)
+    }
+
+    setChosenContact(data.chosenContact)
       let myChatInfo = getAllMessages(myID.current,contactedId.current)
       console.log(myChatInfo)
 
@@ -110,8 +118,11 @@ function App() {
 
     let data = await res.json()
 
+    console.log(data)
     // methods that display the messages in the chat box 
     setChosenContact(data)
+    console.log(data)
+    updateChosenContact(myphoneNumber, data)
     setContactsListContacted(data.contactsList)
 
 
@@ -282,6 +293,22 @@ function App() {
 
 
        }
+
+
+       const updateChosenContact = async (myphoneNumber : any, newContact : any) => {
+
+
+        let res = await fetch(uri + '/user/chosenContact', {
+          method : 'PATCH',
+          body : JSON.stringify({chosenContact : newContact, phoneNumber : myphoneNumber}),
+          headers : {'content-type' : 'application/json'}
+        })
+
+        let data = await res.json()
+        console.log(data)
+
+
+       }
        
 
   useEffect(()=> {
@@ -409,7 +436,7 @@ function App() {
                   <div className="chat-header">
                     {contactsList.length >=1 ? <Avatar id='image1' src={chosenContact.name.length >= 1 ? chosenContact.avatar : contactsList[0].avatar} /> :  <></>}
                     <div className="chat-header-info">
-                        {/* <span className='title'>{ chosenContact.name.length > 1 ?  chosenContact.name : contactsList[0].name}</span><br/> */}
+                        {contactsList.length >=1 ? <span className='title'>{chosenContact.name.length >= 1 ?  chosenContact.name : contactsList[0].name}</span> :  <></> }
                         <span className='info'>last seen at 05:00</span>
                     </div>
                     <div className="chat-header-right">

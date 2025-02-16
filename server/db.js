@@ -19,7 +19,8 @@ const UserSchema = new Schema({
     phoneNumber : String,
     contactsList : [],
     socketId : String,
-    avatar : String
+    avatar : String,
+    chosenContact : {}
 })
 
 
@@ -78,13 +79,13 @@ module.exports.init = async () => {
   message_text: "velit nec nisi vulputate nonummy maecenas tincidunt lacus at velit vivamus vel nulla eget eros elementum pellentesque quisque porta",
   sent_time: "11:48"
 }, {
-  from_number: Susi._id,
-  to_number: Ingar._id,
+  from_number: Ingar._id,
+  to_number: Susi._id,
   message_text: "ipsum dolor sit amet consectetuer adipiscing elit proin interdum mauris non ligula pellentesque",
   sent_time: "9:05"
 }, {
-  from_number: Susi._id,
-  to_number: Ingar._id,
+  from_number: Ingar._id,
+  to_number: Susi._id,
   message_text: "nam dui proin leo odio porttitor id consequat in consequat ut nulla sed accumsan felis",
   sent_time: "1:59"
 }, {
@@ -106,13 +107,13 @@ const SusiLexy = await new chatModel({ content: [{
     message_text: "varius nulla facilisi cras non velit nec nisi vulputate nonummy maecenas tincidunt lacus",
     sent_time: "12:13"
   }, {
-    from_number: Lexy._id,
-    to_number: Susi._id,
+    from_number: Susi._id,
+    to_number: Lexy._id,
     message_text: "porttitor pede justo eu massa donec dapibus duis at velit eu est congue elementum in hac habitasse platea dictumst",
     sent_time: "13:54"
   }, {
-    from_number: Lexy._id,
-    to_number: Susi._id,
+    from_number: Susi._id,
+    to_number: Lexy._id,
     message_text: "dui maecenas tristique est et tempus semper est quam pharetra magna",
     sent_time: "13:06"
   }, {
@@ -133,8 +134,8 @@ const SusiAudie = await new chatModel({ content: [{
     message_text: "nam ultrices libero non mattis pulvinar nulla pede ullamcorper augue a suscipit nulla elit ac nulla",
     sent_time: "16:18"
   }, {
-    from_number: Audie._id,
-    to_number: Susi._id,
+    from_number: Susi._id,
+    to_number: Audie._id,
     message_text: "sodales sed tincidunt eu felis fusce posuere felis sed lacus morbi sem mauris laoreet ut rhoncus aliquet pulvinar sed nisl",
     sent_time: "7:47"
   }, {
@@ -148,16 +149,16 @@ const SusiAudie = await new chatModel({ content: [{
     message_text: "eros suspendisse accumsan tortor quis turpis sed ante vivamus tortor duis mattis egestas metus aenean fermentum donec ut",
     sent_time: "12:17"
   }, {
-    from_number: Audie._id,
-    to_number: Susi._id,
+    from_number: Susi._id,
+    to_number: Audie._id,
     message_text: "lobortis est phasellus sit amet erat nulla tempus vivamus in felis eu sapien cursus",
     sent_time: "20:56"
   }] }).save()
 
 
 const PamIngar = await new chatModel({ content: [{
-    from_number: Pam._id,
-    to_number: Ingar._id,
+    from_number: Ingar._id,
+    to_number: Pam._id,
     message_text: "augue a suscipit nulla elit ac nulla sed vel enim sit amet nunc viverra dapibus",
     sent_time: "17:56"
   }, {
@@ -166,8 +167,8 @@ const PamIngar = await new chatModel({ content: [{
     message_text: "non quam nec dui luctus rutrum nulla tellus in sagittis dui vel nisl",
     sent_time: "15:01"
   }, {
-    from_number: Pam._id,
-    to_number: Ingar._id,
+    from_number: Ingar._id,
+    to_number: Pam._id,
     message_text: "lectus aliquam sit amet diam in magna bibendum imperdiet nullam orci pede venenatis non sodales sed tincidunt eu felis fusce",
     sent_time: "9:34"
   }, {
@@ -186,8 +187,8 @@ const PamIngar = await new chatModel({ content: [{
 
 
     const PamLexy = await new chatModel({ content: [{
-        from_number: Pam._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Pam._id,
         message_text: "at velit vivamus vel nulla eget eros elementum pellentesque quisque porta volutpat erat quisque erat eros",
         sent_time: "21:26"
       }, {
@@ -201,8 +202,8 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "lacinia nisi venenatis tristique fusce congue diam id ornare imperdiet sapien urna pretium nisl ut volutpat",
         sent_time: "3:45"
       }, {
-        from_number: Pam._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Pam._id,
         message_text: "nonummy integer non velit donec diam neque vestibulum eget vulputate ut ultrices vel augue vestibulum",
         sent_time: "4:39"
       }, {
@@ -224,13 +225,13 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "sed tristique in tempus sit amet sem fusce consequat nulla nisl nunc nisl",
         sent_time: "8:39"
       }, {
-        from_number: Pam._id,
-        to_number: Audie._id,
+        from_number: Audie._id,
+        to_number: Pam._id,
         message_text: "lectus vestibulum quam sapien varius ut blandit non interdum in ante vestibulum ante ipsum primis in faucibus orci luctus",
         sent_time: "7:39"
       }, {
-        from_number: Pam._id,
-        to_number: Audie._id,
+        from_number: Audie._id,
+        to_number: Pam._id,
         message_text: "at nulla suspendisse potenti cras in purus eu magna vulputate luctus cum",
         sent_time: "9:54"
       }, {
@@ -241,13 +242,13 @@ const PamIngar = await new chatModel({ content: [{
       }] }).save()
 
     const IngarLexy = await new chatModel({ content: [{
-        from_number: Ingar._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Ingar._id,
         message_text: "pede ac diam cras pellentesque volutpat dui maecenas tristique est et tempus semper est quam pharetra magna ac",
         sent_time: "20:50"
       }, {
-        from_number: Ingar._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Ingar._id,
         message_text: "turpis integer aliquet massa id lobortis convallis tortor risus dapibus augue",
         sent_time: "5:24"
       }, {
@@ -261,8 +262,8 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "velit id pretium iaculis diam erat fermentum justo nec condimentum neque sapien placerat ante nulla justo aliquam quis turpis eget",
         sent_time: "6:21"
       }, {
-        from_number: Ingar._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Ingar._id,
         message_text: "ullamcorper augue a suscipit nulla elit ac nulla sed vel enim sit amet",
         sent_time: "7:02"
       }, {
@@ -279,8 +280,8 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "vitae quam suspendisse potenti nullam porttitor lacus at turpis donec posuere metus vitae ipsum aliquam non mauris morbi non lectus",
         sent_time: "16:40"
       }, {
-        from_number: Audie._id,
-        to_number: Ingar._id,
+        from_number: Ingar._id,
+        to_number: Audie._id,
         message_text: "proin leo odio porttitor id consequat in consequat ut nulla sed accumsan",
         sent_time: "7:54"
       }, {
@@ -294,8 +295,8 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "luctus tincidunt nulla mollis molestie lorem quisque ut erat curabitur gravida nisi at nibh in hac habitasse platea dictumst aliquam",
         sent_time: "23:47"
       }, {
-        from_number: Audie._id,
-        to_number: Ingar._id,
+        from_number: Ingar._id,
+        to_number: Audie._id,
         message_text: "eu mi nulla ac enim in tempor turpis nec euismod",
         sent_time: "14:13"
       }] }).save()
@@ -316,8 +317,8 @@ const PamIngar = await new chatModel({ content: [{
         message_text: "orci luctus et ultrices posuere cubilia curae mauris viverra diam vitae quam suspendisse potenti nullam porttitor lacus",
         sent_time: "9:51"
       }, {
-        from_number: Audie._id,
-        to_number: Lexy._id,
+        from_number: Lexy._id,
+        to_number: Audie._id,
         message_text: "feugiat non pretium quis lectus suspendisse potenti in eleifend quam a odio in hac habitasse platea dictumst maecenas ut",
         sent_time: "23:14"
       }, {
@@ -370,6 +371,23 @@ const PamIngar = await new chatModel({ content: [{
     }});
 
 
+    await userModel.findByIdAndUpdate(Susi._id, { 
+      chosenContact : Audie});
+
+      await userModel.findByIdAndUpdate(Pam._id, { 
+        chosenContact : Ingar});
+
+
+      await userModel.findByIdAndUpdate(Ingar._id, { 
+        chosenContact : Susi});
+
+
+      await userModel.findByIdAndUpdate(Lexy._id, { 
+        chosenContact : Susi});
+
+
+      await userModel.findByIdAndUpdate(Audie._id, { 
+        chosenContact : Lexy});
 
 
     await userModel.findByIdAndUpdate(Georgi._id, { $push: {

@@ -1,7 +1,6 @@
 .chat-body{
   display: grid;
   grid-auto-rows: min-content;
-  grid-template-columns: 1fr 1fr;
   position: relative;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -11,13 +10,13 @@
 .msg-out{
   display: inline;
   position: relative;
-  /* left: 54%; */
+   /* left: 54%; */
   background-color: #d9fdd3;
   padding: 4px;
   border-radius: 5px;
   max-width: 90%;
-  grid-column: 2;
   justify-self: end;
+  max-width: 45%;
 }
 
 .messages-out{
@@ -37,8 +36,8 @@
   padding: 4px;
   border-radius: 5px;
   max-width: 90%;
-  grid-column: 1;
   justify-self: start;
+  max-width: 45%;
 }
 
 

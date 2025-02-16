@@ -3,6 +3,7 @@
     grid-template-columns: 8px 40px auto;
     margin: 16px 0px;
     overflow: hidden;
+    width: 95%;
 }
 
 .item-info{

@@ -125,6 +125,18 @@ app.patch('/user', async (req : any, res : any) => {
 })
 
 
+
+app.patch('/user/chosenContact', async (req : any, res : any) => { 
+
+  const result = await db.User.updateOne({ phoneNumber : req.body.phoneNumber }, 
+    { $set: { chosenContact: req.body.chosenContact } } 
+  )
+
+  res.send(result)     
+
+})
+
+
 app.get('/chats/:myID/:contactedID', async (req : any, res : any) => {
 
   const chat = await db.Chat.findOne({

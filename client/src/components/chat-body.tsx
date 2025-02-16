@@ -8,22 +8,23 @@ function ChatBody (props : any) {
     useEffect( ()=> {  
         
         if(props.chatInfo.length >=1) {
-
-        const time = new Date();
-        const currentHour = time.getHours().toString().padStart(2, '0');
-        const currentMinute = time.getMinutes().toString().padStart(2, '0');
         
-        const messages = props.chatInfo.map((message : any, index : number) => {
-            console.log(message)
+        const messages = props.chatInfo.map((message : any, index : number) => 
+      
+        message.from_number == props.myID ? 
 
-        const chatBody = document.getElementById('chat-body')
+        <div key={index} className='msg-out'>
+          { <div > <small className='sent-at'> {message.sent_time}</small> <span className="messages-out">{message.message_text}</span> </div>  }
+        </div> : 
 
-        {message.from_number == props.myID ? <div className='msg-out'> <small className='sent-at'> {currentHour} + ":" + {currentMinute} + '</small> <span className="messages-out">' + {message.message_text} + '</span> </div> :
-        <div className='msg-in'> <span className='messages-in'> + {message.message_text} + </span> <small className='sent-at'> + {currentHour} + ":" + {currentMinute} + </small></div>}
- 
-        })
+        <div key={index} className='msg-in'>
+        { <div > <span className='messages-in'>{message.message_text}</span> <small className='sent-at'>{message.sent_time}</small></div>  }
+        </div>
+       
+        )
 
 
+        console.log(messages)
         setRenderedMessages(messages)
 
         }
@@ -32,8 +33,7 @@ function ChatBody (props : any) {
 
     return (
 
-        
-        <div id='chat-body' className="chat-body">
+        <div id='chat-body' className='chat-body'>
             {props.chatInfo.length >= 1 ? renderedMessages : <></>}
         </div>
 
