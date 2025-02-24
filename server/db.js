@@ -400,9 +400,9 @@ const PamIngar = await new chatModel({ content: [{
     }});
 
 
-    await userModel.findByIdAndUpdate(Petkan._id, { $push: {
-        contactsList : { $each: [Georgi, Ivan, Georgina]}
-    }});
+    // await userModel.findByIdAndUpdate(Petkan._id, { $push: {
+    //     contactsList : { $each: [Georgi, Ivan, Georgina]}
+    // }});
 
 
     await userModel.findByIdAndUpdate(Toni._id, { $push: {

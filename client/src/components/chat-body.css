@@ -1,7 +1,7 @@
 .chat-body{
   display: grid;
   grid-auto-rows: min-content;
-  position: relative;
+  /* position: relative; */
   overflow-x: hidden;
   overflow-y: scroll;
   gap: 10px
@@ -14,9 +14,8 @@
   background-color: #d9fdd3;
   padding: 4px;
   border-radius: 5px;
-  max-width: 90%;
-  justify-self: end;
   max-width: 45%;
+  justify-self: end;
 }
 
 .messages-out{
@@ -35,9 +34,8 @@
   background-color: #ffffff;
   padding: 4px;
   border-radius: 5px;
-  max-width: 90%;
-  justify-self: start;
   max-width: 45%;
+  justify-self: start;
 }
 
 

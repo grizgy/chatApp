@@ -31,10 +31,11 @@ function App() {
 
 
   const [message,setMessage] = useState('')
+  const [searchedContact,setSearchedContact] = useState('')
+  // const searchedContact = useRef('');
   const [mySocketId,setMysocketId] = useState<string | undefined>('')
   const [contactsList, setContactsList] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''}])
   const [myContact, setMyContact] = useState({avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''})
-  const [contactsListContacted, setContactsListContacted] = useState([{avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''}])
   const [chosenContact, setChosenContact] = useState({avatar : '', contactsList: [], name : '', phoneNumber: '', _id: '', lastMessage: ''})
   const socketIdChat = useRef('');
   const phoneNumberChat = useRef('');
@@ -43,9 +44,6 @@ function App() {
   const [chatId,setChatId] = useState('')
   const [myAvatar, setMyAvatar] = useState('');
   const [renderedContacts, setRenderedContacts] = useState<any[]>([]);
-
-  // const [messageReceived,setMessageReceived] = useState('')
-  // const [messageSent,setMessageSent] = useState('')
 
   const contactedId = useRef('');
 
@@ -73,6 +71,8 @@ function App() {
     console.log(data)
     setMyContact(data)
     setMyAvatar(data.avatar)
+    // setSearchedContact('')
+    // searchedContact.current = ''
     console.log(data._id)
     myID.current = data._id
     console.log(data.contactsList)
@@ -119,31 +119,10 @@ function App() {
     let data = await res.json()
 
     console.log(data)
-    // methods that display the messages in the chat box 
     setChosenContact(data)
-    console.log(data)
     updateChosenContact(myphoneNumber, data)
-    setContactsListContacted(data.contactsList)
-
-
-
-
-    // setContactedId(data._id)
     contactedId.current = data._id
     console.log(contactedId.current)
-
-
-    // let res2 = await fetch(uri + '/chats/' + myID.current + '/' + contactedId.current, {
-    //   method : 'GET',
-    //   headers : {'content-type' : 'application/json'}
-    //   })
-
-    //   let data2 = await res2.json()
-
-
-    //   console.log(data2.content)
-    //   chatId.current = data2.content
-    //   console.log(chatId.current)
 
     let myChatInfo = getAllMessages(myID.current,contactedId.current)
     console.log(myChatInfo)
@@ -155,17 +134,15 @@ function App() {
     })
 
     console.log(chatId)
-    console.log(contactsListContacted)
     console.log(contactsList)
-    // setPhoneNumberChat(data.phoneNumber)
     phoneNumberChat.current = data.phoneNumber
     console.log(phoneNumberChat.current)
     socketIdChat.current = data.socketId 
     console.log(socketIdChat.current)
-    
+
+    setSearchedContact('')
 
   }
-
 
   const sendMsg = async (e : any)=> {
     if(e.key == 'Enter') {
@@ -187,7 +164,6 @@ function App() {
         console.log(phoneNumberChat.current)
         console.log(contactsList)
         console.log(chosenContact)
-        console.log(contactsListContacted)
 
         let elementExists = contactsList.some( (element) => element._id === contactedId.current)
         console.log(elementExists)
@@ -224,7 +200,18 @@ function App() {
         console.log(contactsList)
         console.log(myID.current)
 
-        let elementExistsReceiver = contactsListContacted.some( (element) => element._id === myID.current)
+
+        let response = await fetch(uri + '/user/' + phoneNumberChat.current, {
+          method : 'GET',
+          headers : {'content-type' : 'application/json'}
+        })
+    
+        let newContact = await response.json()
+        let contactsListContacted = newContact.contactsList
+        console.log(contactsListContacted)
+
+        let elementExistsReceiver = contactsListContacted.some( (element : any) => element._id === myID.current)
+        // let elementExistsReceiver = contactsListContacted.some( (element) => element._id === myID.current)
 
         console.log(elementExistsReceiver)
         if(elementExistsReceiver) {
@@ -251,8 +238,7 @@ function App() {
               console.log(contactsListContacted)
               contactsListContacted.splice(contactsListContacted.length-1, 1)
               contactsListContacted.unshift(myContact)
-              setContactsListContacted(contactsListContacted)
-              // replaceElementInDB(contactsListContacted, phoneNumberChat)
+              replaceElementInDB(contactsListContacted, phoneNumberChat.current)
               console.log(contactsListContacted)
 
         }
@@ -313,33 +299,28 @@ function App() {
 
   useEffect(()=> {
 
-    if(contactsList[0] && Object.keys(contactsList[0]).length > 0) {
+    const lowerCaseSearchString = searchedContact
+    
+    console.log(searchedContact)
+
+    const result = contactsList.filter((contact) => contact.name.toLowerCase().includes(lowerCaseSearchString.toLowerCase()));
 
 
-      console.log(contactsList[0].avatar)
-      
-
-      const renderContacts  = contactsList.map((contact : any, index : number) =>
+      const renderContacts  = result.map((contact : any, index : number) =>
         <span key={index} onClick={() => getUser(contact.phoneNumber) }>
-          { <ChatItem avatar={contactsList[index].avatar} title={contactsList[index].name}  lastMessage={contactsList[index].lastMessage}/>  }
+          { <ChatItem avatar={result[index].avatar} title={result[index].name}  lastMessage={result[index].lastMessage}/>  }
           {/* get the last message from the chatID */}
         </span>)
 
       console.log(renderContacts)
       setRenderedContacts(renderContacts)
 
-    }
-
     console.log("ContactsList changed")
-    console.log(contactsList)
+    console.log(contactsList.length)
+    console.log(result.length)
 
-  }, [contactsList])  
+  }, [searchedContact, contactsList])  
   
-  
-  // implement chat search filter
-  // useEffect(()=> {
-
-  // },[])
 
   useEffect(()=> {
     socket.on('connect',()=>{
@@ -354,7 +335,6 @@ function App() {
       getUsersContacts(myphoneNumber)
       // setMessageReceived(data.message)
       socketIdChat.current = data.from.socketId 
-      console.log(contactsListContacted)
       console.log(data)
       console.log(socketIdChat.current)
 
@@ -425,7 +405,11 @@ function App() {
                   <div className='sidebar-search'>
                       <div className="search-container">
                           <SearchIcon color='action'/>
-                          <input placeholder='Search or start a new chat'/>
+                          <input placeholder='Search or start a new chat'
+                          value={searchedContact}
+                          onChange={(e) => setSearchedContact(e.target.value)}
+
+                          />
                       </div>
                   </div>
                   {contactsList.length >= 1 ? renderedContacts : <></>}
